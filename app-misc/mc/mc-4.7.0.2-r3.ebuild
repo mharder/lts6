@@ -39,7 +39,7 @@ S=${WORKDIR}/${MY_P}
 src_unpack() {
 	rpm_src_unpack || die
 	cd "${S}"
-	lts6_rpm_spec_epatch "${WORKDIR}"/which.spec || die
+	lts6_rpm_spec_epatch "${WORKDIR}/${PN}.spec" || die
 }
 
 src_configure() {
