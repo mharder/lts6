@@ -22,7 +22,7 @@ DEPEND=""
 src_unpack() {
 	rpm_src_unpack || die
 	cd "${S}"
-	lts6_rpm_spec_epatch "${WORKDIR}"/which.spec || die
+	lts6_rpm_spec_epatch "${WORKDIR}/${PN}.spec" || die
 	# epatch "${FILESDIR}"/${PN}-1.0.4-makefile-CFLAGS.patch
 	# epatch "${FILESDIR}"/${PN}-1.0.4-saneso.patch
 	epatch "${FILESDIR}"/${PN}-1.0.4-man-links.patch #172986
