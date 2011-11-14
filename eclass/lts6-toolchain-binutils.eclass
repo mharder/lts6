@@ -60,7 +60,8 @@ case ${BTYPE} in
 			mirror://kernel/linux/devel/binutils/test/binutils-${PV}.tar.bz2
 			mirror://gnu/binutils/binutils-${PV}.tar.bz2"
 		# disable kernel mirrors until kernel.org is back up #383579
-		SRC_URI="mirror://gnu/binutils/binutils-${PV}.tar.bz2"
+		SRC_URI="mirror://gnu/binutils/binutils-${PV}.tar.bz2";;
+	srpm)	SRC_URI="http://ftp.scientificlinux.org/linux/scientific/6.1/SRPMS/vendor/${SRPM}";;
 esac
 add_src_uri() {
 	[[ -z $2 ]] && return
@@ -171,12 +172,12 @@ tc-binutils_apply_patches() {
 	elibtoolize --portage --no-uclibc
 }
 
-toolchain-binutils_src_unpack() {
+lts6-toolchain-binutils_src_unpack() {
 	tc-binutils_unpack
 	tc-binutils_apply_patches
 }
 
-toolchain-binutils_src_compile() {
+lts6-toolchain-binutils_src_compile() {
 	# prevent makeinfo from running in releases.  it may not always be
 	# installed, and older binutils may fail with newer texinfo.
 	# besides, we never patch the doc files anyways, so regenerating
@@ -274,12 +275,12 @@ toolchain-binutils_src_compile() {
 	fi
 }
 
-toolchain-binutils_src_test() {
+lts6-toolchain-binutils_src_test() {
 	cd "${MY_BUILDDIR}"
 	emake -k check || die "check failed :("
 }
 
-toolchain-binutils_src_install() {
+lts6-toolchain-binutils_src_install() {
 	local x d
 
 	cd "${MY_BUILDDIR}"
@@ -384,13 +385,13 @@ toolchain-binutils_src_install() {
 	find "${D}" -type d | xargs rmdir >& /dev/null
 }
 
-toolchain-binutils_pkg_postinst() {
+lts6-toolchain-binutils_pkg_postinst() {
 	# Make sure this ${CTARGET} has a binutils version selected
 	[[ -e ${ROOT}/etc/env.d/binutils/config-${CTARGET} ]] && return 0
 	binutils-config ${CTARGET}-${BVER}
 }
 
-toolchain-binutils_pkg_postrm() {
+lts6-toolchain-binutils_pkg_postrm() {
 	local current_profile=$(binutils-config -c ${CTARGET})
 
 	# If no other versions exist, then uninstall for this
