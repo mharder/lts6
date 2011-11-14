@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/media-libs/jpeg/Attic/jpeg-6b-r8.ebuild,v 1.14 2008/08/16 14:46:39 vapier Exp $
 
-EAPI="2"
+EAPI="3"
 
 inherit libtool eutils toolchain-funcs rpm lts6-rpm
 
@@ -12,7 +12,7 @@ HOMEPAGE="http://www.ijg.org/"
 LICENSE="as-is"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x86-fbsd"
-IUSE=""
+IUSE="static-libs"
 
 SRPM="libjpeg-6b-46.el6.src.rpm"
 SRC_URI="http://ftp.scientificlinux.org/linux/scientific/6.1/SRPMS/vendor/${SRPM}"
@@ -60,7 +60,7 @@ src_compile() {
 	tc-export CC RANLIB AR
 	econf \
 		--enable-shared \
-		--disable-static \
+		$(use_enable static-libs static) \
 		--enable-maxmem=64 \
 		|| die "econf failed"
 	emake || die "make failed"
@@ -74,4 +74,6 @@ src_install() {
 	dodoc README install.doc usage.doc wizard.doc change.log \
 		libjpeg.doc example.c structure.doc filelist.doc \
 		coderules.doc
+
+	find "${ED}" -name '*.la' -exec rm -f '{}' +
 }
