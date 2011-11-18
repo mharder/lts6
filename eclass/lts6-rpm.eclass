@@ -10,6 +10,8 @@ inherit eutils
 
 DEPEND=">=app-arch/rpm2targz-9.0.0.3g"
 
+lts6_rpm_echoit() { echo "$@"; "$@"; }
+
 # @FUNCTION: lts6_rpm_spec_epatch
 # @USAGE: [spec]
 # @DESCRIPTION:
@@ -30,7 +32,12 @@ lts6_rpm_spec_epatch() {
 		# EPATCH_OPTS="$*"
 		set -- $(grep "^P${p#%p}: " "${spec}")
 		shift
-		epatch "${dir:+${dir}/}$*"
+		patch_target="$*"
+		if [[ ! ${patch_target} ]]; then
+			eerror "Check ebuild handling of SRPM patches!!!"
+			die "Error parsing patch name from SRPM spec file!"
+		fi
+		epatch "${dir:+${dir}/}${patch_target}" || ewarn "issue"
 	done
 }
 
