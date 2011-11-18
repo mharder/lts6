@@ -2,9 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/x11-wm/icewm/icewm-1.2.37.ebuild,v 1.8 2010/11/02 02:56:36 ford_prefect Exp $
 
-EAPI=1
+EAPI=2
 
-inherit eutils autotools
+inherit eutils autotools rpm lts6-rpm
 
 DESCRIPTION="Ice Window Manager with Themes"
 
@@ -13,12 +13,14 @@ HOMEPAGE="http://www.icewm.org/"
 #fix for icewm preversion package names
 S=${WORKDIR}/${P/_}
 
-SRC_URI="mirror://sourceforge/${PN}/${P/_}.tar.gz"
+SRPM="icewm-1.2.37-1.2.src.rpm"
+SRC_URI="mirror://lts6/sl6-added/${SRPM}"
+RESTRICT="mirror"
 
 LICENSE="GPL-2"
 SLOT="0"
 
-KEYWORDS="~alpha amd64 ppc ~ppc64 sparc x86"
+KEYWORDS="~alpha ~amd64 ~ppc ~ppc64 ~sparc ~x86"
 
 IUSE="esd gnome imlib nls truetype xinerama minimal debug uclibc"
 
@@ -53,7 +55,10 @@ pkg_setup() {
 }
 
 src_unpack() {
-	unpack ${A}
+	rpm_src_unpack || die
+}
+
+src_prepare() {
 	cd "${S}/src"
 
 	use uclibc && epatch "${FILESDIR}/icewm-uclibc.patch"
@@ -68,11 +73,11 @@ src_unpack() {
 	eautoreconf
 }
 
-src_compile() {
-
+src_configure() {
 	if use truetype
 	then
-		myconf="${myconf} --enable-gradients --enable-shape --enable-shaped-decorations"
+		myconf="${myconf} --enable-gradients --enable-shape"
+		myconf="${myconf} --enable-shaped-decorations"
 	else
 		myconf="${myconf} --disable-xfreetype --enable-corefonts
 			$(use_enable minimal lite)"
@@ -92,7 +97,9 @@ src_compile() {
 		$(use_enable debug)"
 
 	CXXFLAGS="${CXXFLAGS}" econf ${myconf} || die "configure failed"
+}
 
+src_compile() {
 	sed -i "s:/icewm-\$(VERSION)::" src/Makefile || die "patch failed"
 	sed -i "s:ungif:gif:" src/Makefile || die "libungif fix failed"
 
@@ -110,6 +117,9 @@ src_install(){
 
 	insinto /usr/share/xsessions
 	doins "${FILESDIR}/IceWM.desktop"
+
+	insinto /usr/share/icewm/icons
+	doins "${WORKDIR}/icons/*"
 }
 
 pkg_postinst() {
