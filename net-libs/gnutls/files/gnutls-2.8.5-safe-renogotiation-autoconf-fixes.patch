@@ -1,0 +1,57 @@
+diff -Naur gnutls-2.8.5/configure.ac gnutls-2.8.5.copy/configure.ac
+--- gnutls-2.8.5/configure.ac	2009-10-14 10:24:51.000000000 -0500
++++ gnutls-2.8.5.copy/configure.ac	2011-11-18 18:45:06.018077186 -0600
+@@ -278,6 +278,7 @@
+   tests/Makefile
+   tests/key-id/Makefile
+   tests/openpgp-certs/Makefile
++  tests/safe-renegotiation/Makefile
+   tests/pathlen/Makefile
+   tests/pkcs1-padding/Makefile
+   tests/pkcs12-decode/Makefile
+diff -Naur gnutls-2.8.5/doc/manpages/Makefile.am gnutls-2.8.5.copy/doc/manpages/Makefile.am
+--- gnutls-2.8.5/doc/manpages/Makefile.am	2009-11-02 04:39:29.000000000 -0600
++++ gnutls-2.8.5.copy/doc/manpages/Makefile.am	2011-11-18 18:45:06.018077186 -0600
+@@ -64,6 +64,7 @@
+ APIMANS += gnutls_certificate_type_get_name.3
+ APIMANS += gnutls_certificate_type_get_id.3
+ APIMANS += gnutls_certificate_type_list.3
++APIMANS += gnutls_safe_renegotiation_status.3
+ APIMANS += gnutls_sign_algorithm_get_name.3
+ APIMANS += gnutls_sign_list.3
+ APIMANS += gnutls_sign_get_id.3
+diff -Naur gnutls-2.8.5/lib/Makefile.am gnutls-2.8.5.copy/lib/Makefile.am
+--- gnutls-2.8.5/lib/Makefile.am	2009-06-02 14:07:14.000000000 -0500
++++ gnutls-2.8.5.copy/lib/Makefile.am	2011-11-18 18:45:06.018077186 -0600
+@@ -79,7 +79,8 @@
+ 	gnutls_rsa_export.c auth_rsa_export.c ext_server_name.c		\
+ 	auth_dh_common.c gnutls_helper.c gnutls_supplemental.c		\
+ 	crypto.c random.c pk-libgcrypt.c mpi-libgcrypt.c		\
+-	rnd-libgcrypt.c cipher-libgcrypt.c mac-libgcrypt.c
++	rnd-libgcrypt.c cipher-libgcrypt.c mac-libgcrypt.c		\
++	ext_safe_renegotiation.c
+ 
+ if ENABLE_OPRFI
+ COBJECTS += $(OPRFI_COBJECTS)
+@@ -98,7 +99,8 @@
+ 	gnutls_rsa_export.h ext_server_name.h auth_dh_common.h		\
+ 	ext_srp.h gnutls_srp.h auth_srp.h auth_srp_passwd.h		\
+ 	gnutls_helper.h auth_psk.h auth_psk_passwd.h			\
+-	gnutls_supplemental.h ext_oprfi.h crypto.h random.h
++	gnutls_supplemental.h ext_oprfi.h crypto.h random.h		\
++	ext_safe_renegotiation.h
+ 
+ # Separate so we can create the documentation
+ 
+diff -Naur gnutls-2.8.5/tests/Makefile.am gnutls-2.8.5.copy/tests/Makefile.am
+--- gnutls-2.8.5/tests/Makefile.am	2009-07-22 13:26:40.000000000 -0500
++++ gnutls-2.8.5.copy/tests/Makefile.am	2011-11-18 18:45:06.018077186 -0600
+@@ -20,7 +20,7 @@
+ # Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ 
+ SUBDIRS = . rsa-md5-collision pkcs1-padding pkcs8-decode pkcs12-decode	\
+-	userid pathlen key-id sha2
++	userid pathlen key-id sha2 safe-renegotiation
+ 
+ if ENABLE_OPENPGP
+ SUBDIRS += openpgp-certs
