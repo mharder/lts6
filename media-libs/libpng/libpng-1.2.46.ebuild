@@ -2,38 +2,35 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/media-libs/libpng/libpng-1.5.6.ebuild,v 1.1 2011/11/04 22:37:57 ssuominen Exp $
 
-# WARNING: media-gfx/optipng is shipping internal copy of libpng14. Look out for
-# security.
-
 EAPI=4
 
-inherit eutils libtool multilib
+inherit eutils libtool multilib rpm lts6-rpm
 
 DESCRIPTION="Portable Network Graphics library"
 HOMEPAGE="http://www.libpng.org/"
-SRC_URI="mirror://sourceforge/${PN}/${P}.tar.xz
-	apng? ( mirror://sourceforge/${PN}-apng/${P}-apng.patch.gz )"
+SRPM="libpng-1.2.46-1.el6_1.src.rpm"
+SRC_URI="mirror://lts6/vendor/${SRPM}"
+RESTRICT="mirror"
 
 LICENSE="as-is"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~sparc-fbsd ~x86-fbsd ~x64-freebsd ~x86-freebsd ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~m68k-mint ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
-IUSE="apng static-libs"
+IUSE="static-libs"
 
-RDEPEND="sys-libs/zlib"
-DEPEND="${RDEPEND}
-	!<x11-libs/gdk-pixbuf-2.24.0-r1
-	!<x11-libs/libsexy-0.1.11-r3
-	!<x11-libs/libview-0.6.6-r2
-	app-arch/xz-utils"
+RDEPEND="sys-libs/zlib
+	!=media-libs/libpng-1.2*:1.2"
+DEPEND="${RDEPEND}"
 
-DOCS=( ANNOUNCE CHANGES libpng-manual.txt README TODO )
+DOCS=( ANNOUNCE CHANGES example.c libpng-1.2.46.txt README TODO )
+
+src_unpack() {
+	rpm_src_unpack || die
+}
 
 src_prepare() {
-	if use apng; then
-		epatch "${WORKDIR}"/${P}-apng.patch
-		# Don't execute symbols check with apng patch wrt #378111
-		sed -i -e '/^check/s:scripts/symbols.chk::' Makefile.in || die
-	fi
+	cd "${S}"
+	lts6_rpm_spec_epatch "${WORKDIR}/${PN}.spec" || die
+
 	elibtoolize
 }
 
@@ -44,14 +41,4 @@ src_configure() {
 src_install() {
 	default
 	find "${ED}" -name '*.la' -exec rm -f {} +
-}
-
-pkg_preinst() {
-	has_version ${CATEGORY}/${PN}:1.4 && return 0
-	preserve_old_lib /usr/$(get_libdir)/libpng14$(get_libname 14)
-}
-
-pkg_postinst() {
-	has_version ${CATEGORY}/${PN}:1.4 && return 0
-	preserve_old_lib_notify /usr/$(get_libdir)/libpng14$(get_libname 14)
 }
