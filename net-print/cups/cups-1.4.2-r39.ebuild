@@ -2,15 +2,17 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/net-print/cups/Attic/cups-1.4.2-r1.ebuild,v 1.5 2010/03/08 22:20:59 reavertm Exp $
 
-EAPI="2"
+EAPI="3"
 
-inherit eutils flag-o-matic multilib pam versionator
+inherit eutils flag-o-matic multilib pam versionator rpm lts6-rpm
 
 MY_P=${P/_}
 
 DESCRIPTION="The Common Unix Printing System."
 HOMEPAGE="http://www.cups.org/"
-SRC_URI="mirror://easysw/${PN}/${PV}/${MY_P}-source.tar.bz2"
+SRPM="cups-1.4.2-39.el6_1.1.src.rpm"
+SRC_URI="mirror://lts6/vendor/${SRPM}"
+RESTRICT="mirror"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -65,7 +67,7 @@ PROVIDE="virtual/lpr"
 # upstream includes an interactive test which is a nono for gentoo.
 # therefore, since the printing herd has bigger fish to fry, for now,
 # we just leave it out, even if FEATURES=test
-RESTRICT="test"
+RESTRICT="${RESTRICT} test"
 
 S="${WORKDIR}/${MY_P}"
 
@@ -80,14 +82,105 @@ pkg_setup() {
 	enewgroup lpadmin 106
 }
 
+src_unpack() {
+	rpm_src_unpack || die
+}
+
 src_prepare() {
+	# The last patch (cups-lspp.patch) is causing problems,
+	# so the patches need to be enumerated."
+	cd "${S}"
+	# lts6_rpm_spec_epatch "${WORKDIR}/${PN}.spec" || die
+
+	patchlist="cups-no-gzip-man.patch
+cups-1.1.16-system-auth.patch
+cups-multilib.patch
+cups-serial.patch
+cups-banners.patch
+cups-serverbin-compat.patch
+cups-no-export-ssllibs.patch
+cups-str3448.patch
+cups-direct-usb.patch
+cups-lpr-help.patch
+cups-peercred.patch
+cups-pid.patch
+cups-page-label.patch
+cups-eggcups.patch
+cups-getpass.patch
+cups-driverd-timeout.patch
+cups-strict-ppd-line-length.patch
+cups-logrotate.patch
+cups-usb-paperout.patch
+cups-build.patch
+cups-res_init.patch
+cups-filter-debug.patch
+cups-uri-compat.patch
+cups-cups-get-classes.patch
+cups-avahi.patch
+cups-str3382.patch
+cups-str3285_v2-str3503.patch
+cups-str3390.patch
+cups-str3391.patch
+cups-str3381.patch
+cups-str3399.patch
+cups-str3403.patch
+cups-str3407.patch
+cups-str3418.patch
+cups-CVE-2009-3553.patch
+cups-str3422.patch
+cups-str3413.patch
+cups-str3439.patch
+cups-str3440.patch
+cups-str3442.patch
+cups-negative-snmp-string-length.patch
+cups-sidechannel-intrs.patch
+cups-media-empty-warning.patch
+cups-str3435.patch
+cups-str3436.patch
+cups-str3425.patch
+cups-str3428.patch
+cups-str3431.patch
+cups-snmp-quirks.patch
+cups-str3458.patch
+cups-str3460.patch
+cups-str3495.patch
+cups-EAI_AGAIN.patch
+cups-str3505.patch
+cups-CVE-2010-0302.patch
+cups-str3541.patch
+cups-large-snmp-lengths.patch
+cups-hp-deviceid-oid.patch
+cups-texttops-rotate-page.patch
+cups-cgi-vars.patch
+cups-hostnamelookups.patch
+cups-CVE-2010-0540.patch
+cups-CVE-2010-0542.patch
+cups-CVE-2010-1748.patch
+cups-CVE-2010-2432.patch
+cups-CVE-2010-2431.patch
+cups-CVE-2010-2941.patch
+cups-str3627.patch
+cups-str3535.patch
+cups-str3679.patch
+cups-0755.patch
+cups-undo-str2537.patch
+cups-dns-failure-tolerance.patch
+cups-snmp-conf-typo.patch
+cups-str3795-str3880.patch"
+
+	for patch in ${patchlist}; do
+		epatch "${WORKDIR}/${patch}" || die
+	done
+
 	# create a missing symlink to allow https printing via IPP, bug #217293
 	epatch "${FILESDIR}/${PN}-1.4.0-backend-https.patch"
 
 	# CVE-2009-3553: Use-after-free (crash) due improper reference counting
 	# in abstract file descriptors handling interface
 	# upstream bug STR #3200
-	epatch "${FILESDIR}/${PN}-1.4.2-str3200.patch"
+	#
+	# Note: Provided by SRPM patches
+	# epatch "${FILESDIR}/${PN}-1.4.2-str3200.patch"
 }
 
 src_configure() {
@@ -185,6 +278,9 @@ src_install() {
 
 	# create /etc/cups/client.conf, bug #196967 and #266678
 	echo "ServerName /var/run/cups/cups.sock" >> "${D}"/etc/cups/client.conf
+
+	# Fix locale code for Norwegian (bug #520379).
+	mv locale/cups_no.po locale/cups_nb.po
 }
 
 pkg_postinst() {
