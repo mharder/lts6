@@ -2,15 +2,17 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-libs/openssl/openssl-1.0.0e.ebuild,v 1.8 2011/10/01 07:28:54 pva Exp $
 
-EAPI="2"
+EAPI="3"
 
-inherit eutils flag-o-matic toolchain-funcs
+inherit eutils flag-o-matic toolchain-funcs rpm lts6-rpm
 
 REV="1.7"
 DESCRIPTION="full-strength general purpose cryptography library (including SSL v2/v3 and TLS v1)"
 HOMEPAGE="http://www.openssl.org/"
-SRC_URI="mirror://openssl/source/${P}.tar.gz
-	http://cvs.pld-linux.org/cgi-bin/cvsweb.cgi/~checkout~/packages/${PN}/${PN}-c_rehash.sh?rev=${REV} -> ${PN}-c_rehash.sh.${REV}"
+
+SRPM="openssl-1.0.0-10.el6_1.5.src.rpm"
+SRC_URI="mirror://lts6/vendor/${SRPM}"
+RESTRICT="mirror"
 
 LICENSE="openssl"
 SLOT="0"
@@ -26,12 +28,86 @@ DEPEND="${RDEPEND}
 	test? ( sys-devel/bc )"
 PDEPEND="app-misc/ca-certificates"
 
+# Omiting upstream openssl-1.0.0-beta3-soversion.patch since the
+# Gentoo ebuild set's it's own so version.
+# Omitting openssl-0.9.8a-no-rpath.patch since the Gentoo patch
+# openssl-1.0.0a-ldflags.patch sets that line otherwise.
+SRPM_PATCHLIST="Patch0: openssl-1.0.0-beta4-redhat.patch
+Patch1: openssl-1.0.0-beta3-defaults.patch
+Patch4: openssl-1.0.0-beta5-enginesdir.patch
+Patch6: openssl-0.9.8b-test-use-localhost.patch
+Patch23: openssl-1.0.0-beta4-default-paths.patch
+Patch24: openssl-0.9.8j-bad-mime.patch
+Patch25: openssl-1.0.0a-manfix.patch
+Patch32: openssl-0.9.8g-ia64.patch
+Patch33: openssl-1.0.0-beta4-ca-dir.patch
+Patch34: openssl-0.9.6-x509.patch
+Patch35: openssl-0.9.8j-version-add-engines.patch
+Patch38: openssl-1.0.0-beta5-cipher-change.patch
+Patch39: openssl-1.0.0-beta5-ipv6-apps.patch
+Patch40: openssl-1.0.0-fips.patch
+Patch41: openssl-1.0.0-beta3-fipscheck.patch
+Patch43: openssl-1.0.0-beta3-fipsmode.patch
+Patch44: openssl-1.0.0-beta3-fipsrng.patch
+Patch45: openssl-0.9.8j-env-nozlib.patch
+Patch47: openssl-1.0.0-beta5-readme-warning.patch
+Patch49: openssl-1.0.0-beta4-algo-doc.patch
+Patch50: openssl-1.0.0-beta4-dtls1-abi.patch
+Patch51: openssl-1.0.0-version.patch
+Patch52: openssl-1.0.0-beta4-aesni.patch
+Patch53: openssl-1.0.0-name-hash.patch
+Patch54: openssl-1.0.0c-speed-fips.patch
+Patch55: openssl-1.0.0c-apps-ipv6listen.patch
+Patch56: openssl-1.0.0c-rsa-x931.patch
+Patch57: openssl-1.0.0-fips186-3.patch
+Patch58: openssl-1.0.0c-fips-md5-allow.patch
+Patch59: openssl-1.0.0c-pkcs12-fips-default.patch
+Patch90: openssl-1.0.0-cavs.patch
+Patch91: openssl-1.0.0-fips-aesni.patch
+Patch60: openssl-1.0.0-dtls1-backports.patch
+Patch61: openssl-1.0.0-init-sha256.patch
+Patch62: openssl-1.0.0-cve-2010-0742.patch
+Patch63: openssl-1.0.0-cve-2010-1633.patch
+Patch64: openssl-1.0.0-cve-2010-3864.patch
+Patch65: openssl-1.0.0-cve-2010-4180.patch
+Patch66: openssl-1.0.0-cve-2011-0014.patch
+Patch68: openssl-1.0.0-cve-2011-3207.patch"
+
+pkg_setup() {
+	if ! use bindist; then
+		ewarn
+		ewarn \*\*\*\*\* WARNING!!! \*\*\*\*\*
+		ewarn The dev-libs/openssl package is currently suffering
+		ewarn build failures when built with '-bindist'.
+		ewarn Please use '+bindist' on this package until the
+		ewarn issue is resolved.
+	fi
+}
+
 src_unpack() {
-	unpack ${P}.tar.gz
-	cp "${DISTDIR}"/${PN}-c_rehash.sh.${REV} "${WORKDIR}"/c_rehash || die
+	rpm_src_unpack || die
+	cp "${FILESDIR}"/${PN}-c_rehash.sh.${REV} "${WORKDIR}"/c_rehash || die
 }
 
 src_prepare() {
+	local p q
+
+	set -- ${SRPM_PATCHLIST}
+	while [ "$1" ]; do
+		listatom=$1
+		if [[ "${listatom}" != *"atch"* ]]; then
+			die "SRPM_PATCHLIST error $1"
+		else
+			shift
+		fi
+		patch=$1
+		if [[ ! ${patch} ]]; then
+			die "Error parsing patch list!"
+		fi
+		epatch "${WORKDIR}/${patch}" || die
+	shift
+	done
+
 	epatch "${FILESDIR}"/${PN}-1.0.0a-ldflags.patch #327421
 	epatch "${FILESDIR}"/${PN}-1.0.0d-fbsd-amd64.patch #363089
 	epatch "${FILESDIR}"/${PN}-1.0.0d-windres.patch #373743
