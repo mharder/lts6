@@ -41,3 +41,27 @@ lts6_rpm_spec_epatch() {
 	done
 }
 
+# @FUNCTION: lts6_srpm_epatch
+# @USAGE: [spec]
+# @DESCRIPTION:
+# Apply patches from a list formatted at "patch[##]: [patch_name].patch".
+# This facilitates copying a list of patches from a SRPM spec file.
+# The less mangling required when processing the spec file, the fewer
+# opportunities for error.
+lts6_srpm_epatch() {
+	set -- ${SRPM_PATCHLIST}
+	while [ "$1" ]; do
+		listatom=$1
+		if [[ "${listatom}" != *"atch"* ]]; then
+			die "SRPM_PATCHLIST error $1"
+		else
+			shift
+		fi
+		patch=$1
+		if [[ ! ${patch} ]]; then
+			die "Error parsing patch list!"
+		fi
+		epatch "${WORKDIR}/${patch}" || die
+		shift
+	done
+}
