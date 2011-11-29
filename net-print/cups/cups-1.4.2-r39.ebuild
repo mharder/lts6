@@ -76,6 +76,83 @@ for X in ${LANGS} ; do
 	IUSE="${IUSE} linguas_${X}"
 done
 
+# Omit the cups-lspp.patch and the cups-serverbin-compat.patch.
+# To Do: Revisit the possibility of including these patches.
+SRPM_PATCHLIST="Patch1: cups-no-gzip-man.patch
+Patch2: cups-1.1.16-system-auth.patch
+Patch3: cups-multilib.patch
+Patch4: cups-serial.patch
+Patch5: cups-banners.patch
+Patch7: cups-no-export-ssllibs.patch
+Patch8: cups-str3448.patch
+Patch9: cups-direct-usb.patch
+Patch10: cups-lpr-help.patch
+Patch11: cups-peercred.patch
+Patch12: cups-pid.patch
+Patch13: cups-page-label.patch
+Patch14: cups-eggcups.patch
+Patch15: cups-getpass.patch
+Patch16: cups-driverd-timeout.patch
+Patch17: cups-strict-ppd-line-length.patch
+Patch18: cups-logrotate.patch
+Patch19: cups-usb-paperout.patch
+Patch20: cups-build.patch
+Patch21: cups-res_init.patch
+Patch22: cups-filter-debug.patch
+Patch23: cups-uri-compat.patch
+Patch24: cups-cups-get-classes.patch
+Patch25: cups-avahi.patch
+Patch26: cups-str3382.patch
+Patch27: cups-str3285_v2-str3503.patch
+Patch28: cups-str3390.patch
+Patch29: cups-str3391.patch
+Patch30: cups-str3381.patch
+Patch31: cups-str3399.patch
+Patch32: cups-str3403.patch
+Patch33: cups-str3407.patch
+Patch34: cups-str3418.patch
+Patch35: cups-CVE-2009-3553.patch
+Patch36: cups-str3422.patch
+Patch37: cups-str3413.patch
+Patch38: cups-str3439.patch
+Patch39: cups-str3440.patch
+Patch40: cups-str3442.patch
+Patch41: cups-negative-snmp-string-length.patch
+Patch42: cups-sidechannel-intrs.patch
+Patch43: cups-media-empty-warning.patch
+Patch44: cups-str3435.patch
+Patch45: cups-str3436.patch
+Patch46: cups-str3425.patch
+Patch47: cups-str3428.patch
+Patch48: cups-str3431.patch
+Patch49: cups-snmp-quirks.patch
+Patch50: cups-str3458.patch
+Patch51: cups-str3460.patch
+Patch52: cups-str3495.patch
+Patch53: cups-EAI_AGAIN.patch
+Patch54: cups-str3505.patch
+Patch55: cups-CVE-2010-0302.patch
+Patch56: cups-str3541.patch
+Patch57: cups-large-snmp-lengths.patch
+Patch58: cups-hp-deviceid-oid.patch
+Patch59: cups-texttops-rotate-page.patch
+Patch60: cups-cgi-vars.patch
+Patch61: cups-hostnamelookups.patch
+Patch62: cups-CVE-2010-0540.patch
+Patch63: cups-CVE-2010-0542.patch
+Patch64: cups-CVE-2010-1748.patch
+Patch65: cups-CVE-2010-2432.patch
+Patch66: cups-CVE-2010-2431.patch
+Patch67: cups-CVE-2010-2941.patch
+Patch68: cups-str3627.patch
+Patch69: cups-str3535.patch
+Patch70: cups-str3679.patch
+Patch71: cups-0755.patch
+Patch72: cups-undo-str2537.patch
+Patch73: cups-dns-failure-tolerance.patch
+Patch74: cups-snmp-conf-typo.patch
+Patch75: cups-str3795-str3880.patch"
+
 pkg_setup() {
 	enewgroup lp
 	enewuser lp -1 -1 -1 lp
@@ -92,85 +169,7 @@ src_prepare() {
 	cd "${S}"
 	# lts6_rpm_spec_epatch "${WORKDIR}/${PN}.spec" || die
 
-	patchlist="cups-no-gzip-man.patch
-cups-1.1.16-system-auth.patch
-cups-multilib.patch
-cups-serial.patch
-cups-banners.patch
-cups-serverbin-compat.patch
-cups-no-export-ssllibs.patch
-cups-str3448.patch
-cups-direct-usb.patch
-cups-lpr-help.patch
-cups-peercred.patch
-cups-pid.patch
-cups-page-label.patch
-cups-eggcups.patch
-cups-getpass.patch
-cups-driverd-timeout.patch
-cups-strict-ppd-line-length.patch
-cups-logrotate.patch
-cups-usb-paperout.patch
-cups-build.patch
-cups-res_init.patch
-cups-filter-debug.patch
-cups-uri-compat.patch
-cups-cups-get-classes.patch
-cups-avahi.patch
-cups-str3382.patch
-cups-str3285_v2-str3503.patch
-cups-str3390.patch
-cups-str3391.patch
-cups-str3381.patch
-cups-str3399.patch
-cups-str3403.patch
-cups-str3407.patch
-cups-str3418.patch
-cups-CVE-2009-3553.patch
-cups-str3422.patch
-cups-str3413.patch
-cups-str3439.patch
-cups-str3440.patch
-cups-str3442.patch
-cups-negative-snmp-string-length.patch
-cups-sidechannel-intrs.patch
-cups-media-empty-warning.patch
-cups-str3435.patch
-cups-str3436.patch
-cups-str3425.patch
-cups-str3428.patch
-cups-str3431.patch
-cups-snmp-quirks.patch
-cups-str3458.patch
-cups-str3460.patch
-cups-str3495.patch
-cups-EAI_AGAIN.patch
-cups-str3505.patch
-cups-CVE-2010-0302.patch
-cups-str3541.patch
-cups-large-snmp-lengths.patch
-cups-hp-deviceid-oid.patch
-cups-texttops-rotate-page.patch
-cups-cgi-vars.patch
-cups-hostnamelookups.patch
-cups-CVE-2010-0540.patch
-cups-CVE-2010-0542.patch
-cups-CVE-2010-1748.patch
-cups-CVE-2010-2432.patch
-cups-CVE-2010-2431.patch
-cups-CVE-2010-2941.patch
-cups-str3627.patch
-cups-str3535.patch
-cups-str3679.patch
-cups-0755.patch
-cups-undo-str2537.patch
-cups-dns-failure-tolerance.patch
-cups-snmp-conf-typo.patch
-cups-str3795-str3880.patch"
-
-	for patch in ${patchlist}; do
-		epatch "${WORKDIR}/${patch}" || die
-	done
+	lts6_srpm_epatch || die
 
 	# create a missing symlink to allow https printing via IPP, bug #217293
 	epatch "${FILESDIR}/${PN}-1.4.0-backend-https.patch"
