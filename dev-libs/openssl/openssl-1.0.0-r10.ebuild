@@ -32,8 +32,13 @@ PDEPEND="app-misc/ca-certificates"
 # Gentoo ebuild set's it's own so version.
 # Omitting openssl-0.9.8a-no-rpath.patch since the Gentoo patch
 # openssl-1.0.0a-ldflags.patch sets that line otherwise.
-SRPM_PATCHLIST="Patch0: openssl-1.0.0-beta4-redhat.patch
-Patch1: openssl-1.0.0-beta3-defaults.patch
+#
+# Removing Patch0: openssl-1.0.0-beta4-redhat.patch
+#   Examination shows it shouldn't be necessary.
+#   After removal, it was confirmed that this patch was leading to a
+#   silent error where libcrypto.so.1.0.0 and libssl.so.1.0.0 were not
+#   being installed.
+SRPM_PATCHLIST="Patch1: openssl-1.0.0-beta3-defaults.patch
 Patch4: openssl-1.0.0-beta5-enginesdir.patch
 Patch6: openssl-0.9.8b-test-use-localhost.patch
 Patch23: openssl-1.0.0-beta4-default-paths.patch
@@ -209,6 +214,7 @@ src_test() {
 
 src_install() {
 	emake -j1 INSTALL_PREFIX="${D}" install || die
+	echo "Finished: emake -j1 INSTALL_PREFIX=\"${D}\" install || die"
 	dobin "${WORKDIR}"/c_rehash || die #333117
 	dodoc CHANGES* FAQ NEWS README doc/*.txt doc/c-indentation.el
 	dohtml -r doc/*
