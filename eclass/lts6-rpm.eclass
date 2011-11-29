@@ -30,7 +30,7 @@ lts6_rpm_spec_epatch() {
 		p=$1
 		shift
 		# EPATCH_OPTS="$*"
-		set -- $(grep "^P${p#%p}: " "${spec}")
+		set -- $(grep "^P${p#%p}:" "${spec}")
 		shift
 		patch_target="$*"
 		if [[ ! ${patch_target} ]]; then
