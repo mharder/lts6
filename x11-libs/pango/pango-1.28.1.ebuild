@@ -67,9 +67,13 @@ src_prepare() {
 	# make config file location host specific so that a 32bit and 64bit pango
 	# wont fight with each other on a multilib system.  Fix building for
 	# emul-linux-x86-gtklibs
-	if multilib_enabled ; then
-		epatch "${FILESDIR}/${PN}-1.26.0-lib64.patch"
-	fi
+	#
+	# This patch already provided in SRPM patch:
+	# pango-1.21.4-lib64.patch
+	#
+	# if multilib_enabled ; then
+	#	epatch "${FILESDIR}/${PN}-1.26.0-lib64.patch"
+	# fi
 
 	eautoreconf
 }
