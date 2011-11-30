@@ -2,16 +2,20 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-python/pycairo/Attic/pycairo-1.8.6.ebuild,v 1.3 2009/08/08 20:36:20 arfrever Exp $
 
-EAPI="2"
+EAPI="3"
 
-NEED_PYTHON="2.6"
+PYTHON_DEPEND="2:2.6"
 SUPPORT_PYTHON_ABIS="1"
+RESTRICT_PYTHON_ABIS="2.4 2.5 3.*"
 
-inherit distutils
+inherit distutils rpm lts6-rpm
 
 DESCRIPTION="Python wrapper for cairo vector graphics library"
 HOMEPAGE="http://cairographics.org/pycairo/"
-SRC_URI="http://cairographics.org/releases/${P}.tar.gz"
+
+SRPM="pycairo-1.8.6-2.1.el6.src.rpm"
+SRC_URI="mirror://lts6/vendor/${SRPM}"
+RESTRICT="mirror"
 
 LICENSE="|| ( LGPL-2.1 MPL-1.1 )"
 SLOT="0"
@@ -27,6 +31,10 @@ RESTRICT_PYTHON_ABIS="2.4 2.5 3*"
 
 PYTHON_MODNAME="cairo"
 DOCS="AUTHORS NEWS README"
+
+src_unpack() {
+	rpm_src_unpack || die
+}
 
 src_prepare() {
 	# Don't run py-compile.
