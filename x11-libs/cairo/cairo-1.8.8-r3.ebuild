@@ -14,7 +14,7 @@ SRC_URI="mirror://lts6/vendor/${SRPM}"
 LICENSE="|| ( LGPL-2.1 MPL-1.1 )"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x86-fbsd ~x86-freebsd ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x64-macos ~x86-macos ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
-IUSE="aqua cleartype debug directfb doc glitz lcdfilter opengl +svg X xcb"
+IUSE="aqua cleartype debug directfb doc lcdfilter opengl +svg X xcb"
 
 # Test causes a circular depend on gtk+... since gtk+ needs cairo but test needs gtk+ so we need to block it
 RESTRICT="test mirror"
@@ -25,7 +25,6 @@ RDEPEND="media-libs/fontconfig
 	>=media-libs/libpng-1.2.43-r2:0
 	>=x11-libs/pixman-0.12.0
 	directfb? ( >=dev-libs/DirectFB-0.9.24 )
-	glitz? ( >=media-libs/glitz-0.5.1 )
 	svg? ( dev-libs/libxml2 )
 	X? ( 	>=x11-libs/libXrender-0.6
 		x11-libs/libXext
@@ -84,13 +83,9 @@ src_configure() {
 	#gets rid of fbmmx.c inlining warnings
 	append-flags -finline-limit=1200
 
-	if use glitz && use opengl; then
-		export glitz_LIBS=$(pkg-config --libs glitz-glx)
-	fi
-
 	econf $(use_enable X xlib) $(use_enable doc gtk-doc) \
 		$(use_enable directfb) $(use_enable xcb) \
-		$(use_enable svg) $(use_enable glitz) $(use_enable X xlib-xrender) \
+		$(use_enable svg) $(use_enable X xlib-xrender) \
 		$(use_enable debug test-surfaces) --enable-pdf  --enable-png \
 		--enable-ft --enable-ps \
 		$(use_enable aqua quartz) $(use_enable aqua quartz-image) \
