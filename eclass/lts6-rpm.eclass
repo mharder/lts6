@@ -24,6 +24,12 @@ lts6_rpm_echoit() { echo "$@"; "$@"; }
 lts6_rpm_spec_epatch() {
 	local p spec=${1:-${PN}.spec}
 	local dir=${spec%/*}
+
+	if [ ! -e ${spec} ]; then
+		eerror "Could not find SRPM spec file, check ebuild!!!"
+		die "Error locating SRPM spec file!"
+	fi
+
 	grep '^%patch' "${spec}" | \
 	while read line ; do
 		set -- ${line}
