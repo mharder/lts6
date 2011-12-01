@@ -32,7 +32,7 @@ src_unpack() {
 
 src_prepare() {
 	cd "${S}"
-	lts6_rpm_spec_epatch "${WORKDIR}/pygtk2.spec" || die
+	lts6_rpm_spec_epatch "${WORKDIR}/imlib2.spec" || die
 
 	epatch "${FILESDIR}"/${P}-libpng14.patch
 	# The vulnerability patch is already included in the SRPM
