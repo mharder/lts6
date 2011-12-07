@@ -2,16 +2,20 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-libs/glib/Attic/glib-2.22.5.ebuild,v 1.9 2011/03/26 18:34:04 eva dead $
 
-EAPI="2"
+EAPI="3"
 
-inherit gnome.org libtool eutils flag-o-matic
+inherit gnome.org libtool eutils flag-o-matic rpm lts6-rpm
 
 DESCRIPTION="The GLib library of C routines"
 HOMEPAGE="http://www.gtk.org/"
 
+SRPM="glib2-2.22.5-6.el6.src.rpm"
+SRC_URI="mirror://lts6/vendor/${SRPM}"
+RESTRICT="mirror"
+
 LICENSE="LGPL-2"
 SLOT="2"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k ~mips ~ppc ppc64 s390 sh sparc x86 ~sparc-fbsd ~x86-fbsd"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~sparc-fbsd ~x86-fbsd"
 IUSE="debug doc fam selinux xattr"
 
 RDEPEND="virtual/libiconv
@@ -25,7 +29,14 @@ DEPEND="${RDEPEND}
 		>=dev-util/gtk-doc-1.11
 		~app-text/docbook-xml-dtd-4.1.2 )"
 
+src_unpack() {
+	rpm_src_unpack || die
+}
+
 src_prepare() {
+	cd "${S}"
+	lts6_rpm_spec_epatch "${WORKDIR}/glib2.spec" || die
+
 	if use ia64 ; then
 		# Only apply for < 4.1
 		local major=$(gcc-major-version)
@@ -81,6 +92,10 @@ src_install() {
 	rm -f "${D}/usr/lib/charset.alias"
 
 	dodoc AUTHORS ChangeLog* NEWS* README || die "dodoc failed"
+
+	insinto /etc/profile.d/
+	doins "${WORKDIR}/glib2.sh" || die
+	doins "${WORKDIR}/glib2.csh" || die
 }
 
 src_test() {
