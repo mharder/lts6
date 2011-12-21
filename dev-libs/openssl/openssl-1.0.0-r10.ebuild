@@ -17,7 +17,7 @@ RESTRICT="mirror"
 LICENSE="openssl"
 SLOT="0"
 KEYWORDS="alpha amd64 arm hppa ia64 m68k ~mips ppc ppc64 s390 sh sparc x86 ~sparc-fbsd ~x86-fbsd"
-IUSE="bindist gmp kerberos rfc3779 sse2 test zlib"
+IUSE="bindist elfips gmp kerberos rfc3779 sse2 test zlib"
 
 RDEPEND="gmp? ( dev-libs/gmp )
 	zlib? ( sys-libs/zlib )
@@ -180,11 +180,14 @@ src_configure() {
 		$(use_ssl kerberos krb5 --with-krb5-flavor=${krb5}) \
 		$(use_ssl rfc3779) \
 		$(use_ssl zlib) \
+		$(use elfips && echo "fips") \
 		--prefix=/usr \
 		--openssldir=/etc/ssl \
 		--libdir=$(get_libdir) \
 		shared threads \
 		|| die "Configure failed"
+		# NOTE: the 'die' statement doesn't seem to work correctly
+		#       with the custom configuration script used here.
 
 	# Clean out hardcoded flags that openssl uses
 	local CFLAG=$(grep ^CFLAG= Makefile | LC_ALL=C sed \
