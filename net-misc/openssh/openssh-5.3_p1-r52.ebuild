@@ -69,6 +69,9 @@ S=${WORKDIR}/${PARCH}
 
 src_unpack() {
 	rpm_src_unpack || die
+}
+
+src_prepare() {
 	cd "${S}"
 
 	# Common SRPM Patches
