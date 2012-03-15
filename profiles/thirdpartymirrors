@@ -1,2 +1,3 @@
 lts6 http://ftp.scientificlinux.org/linux/scientific/6.1/SRPMS
 lts6-ep ftp://fr2.rpmfind.net/linux/epel/beta/6/SRPMS
+lts62 http://ftp.scientificlinux.org/linux/scientific/6.2/SRPMS
