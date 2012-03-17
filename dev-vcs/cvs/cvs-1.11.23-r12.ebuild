@@ -14,11 +14,12 @@ SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~ppc-aix ~hppa-hpux ~ia64-hpux ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos ~m68k-mint ~sparc-solaris ~sparc64-solaris ~x64-solaris ~x86-solaris"
 IUSE="doc emacs"
 
-SRPM="cvs-1.11.23-11.el6_0.1.src.rpm"
-SRC_URI="http://ftp.scientificlinux.org/linux/scientific/6.1/SRPMS/vendor/${SRPM}
+SRPM="cvs-1.11.23-11.el6_2.1.src.rpm"
+SRC_URI="mirror://lts62/vendor/${SRPM}
 	doc? ( mirror://gnu/non-gnu/cvs/source/stable/${PV}/cederqvist-${PV}.html.bz2
 		mirror://gnu/non-gnu/cvs/source/stable/${PV}/cederqvist-${PV}.pdf
 		mirror://gnu/non-gnu/cvs/source/stable/${PV}/cederqvist-${PV}.ps )"
+RESTRICT="mirror"
 
 DEPEND=">=sys-libs/zlib-1.1.4"
 
