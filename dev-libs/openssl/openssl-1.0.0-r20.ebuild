@@ -10,8 +10,8 @@ REV="1.7"
 DESCRIPTION="full-strength general purpose cryptography library (including SSL v2/v3 and TLS v1)"
 HOMEPAGE="http://www.openssl.org/"
 
-SRPM="openssl-1.0.0-10.el6_1.5.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}"
+SRPM="openssl-1.0.0-20.el6_2.2.src.rpm"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
 LICENSE="openssl"
@@ -69,6 +69,10 @@ Patch58: openssl-1.0.0c-fips-md5-allow.patch
 Patch59: openssl-1.0.0c-pkcs12-fips-default.patch
 Patch90: openssl-1.0.0-cavs.patch
 Patch91: openssl-1.0.0-fips-aesni.patch
+Patch92: openssl-1.0.0-apps-dgst.patch
+Patch93: openssl-1.0.0-intelopts.patch
+Patch94: openssl-1.0.0-sha2test.patch
+Patch95: openssl-1.0.0-x86cpuid.patch
 Patch60: openssl-1.0.0-dtls1-backports.patch
 Patch61: openssl-1.0.0-init-sha256.patch
 Patch62: openssl-1.0.0-cve-2010-0742.patch
@@ -76,7 +80,13 @@ Patch63: openssl-1.0.0-cve-2010-1633.patch
 Patch64: openssl-1.0.0-cve-2010-3864.patch
 Patch65: openssl-1.0.0-cve-2010-4180.patch
 Patch66: openssl-1.0.0-cve-2011-0014.patch
-Patch68: openssl-1.0.0-cve-2011-3207.patch"
+Patch67: openssl-1.0.0-chil-fixes.patch
+Patch68: openssl-1.0.0-cve-2011-3207.patch
+Patch69: openssl-1.0.0-dtls-fixes.patch
+Patch70: openssl-1.0.0-cve-2011-4576.patch
+Patch71: openssl-1.0.0-cve-2011-4577.patch
+Patch72: openssl-1.0.0-cve-2011-4619.patch
+Patch73: openssl-1.0.0-modes-unaligned.patch"
 
 pkg_setup() {
 	if ! use bindist; then
