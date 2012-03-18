@@ -20,8 +20,8 @@ XSTS_NAME_2="xmlschema2004-01-14"
 XSTS_TARBALL_1="xsts-2002-01-16.tar.gz"
 XSTS_TARBALL_2="xsts-2004-01-14.tar.gz"
 
-SRPM="libxml2-2.7.6-4.el6.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}
+SRPM="libxml2-2.7.6-4.el6_2.4.src.rpm"
+SRC_URI="mirror://lts62/vendor/${SRPM}
 	test? (
 		${XSTS_HOME}/${XSTS_NAME_1}/${XSTS_TARBALL_1}
 		${XSTS_HOME}/${XSTS_NAME_2}/${XSTS_TARBALL_2} )"
@@ -67,7 +67,11 @@ src_prepare() {
 			Patch9: CVE-2011-1944.patch
 			Patch10: libxml2-2.7.8-xpath-hardening.patch
 			Patch11: CVE-2011-0216.patch
-			Patch12: CVE-2011-2834.patch"
+			Patch12: CVE-2011-2834.patch
+			Patch13: CVE-2011-3905.patch
+			Patch14: CVE-2011-3919.patch
+			Patch15: CVE-2012-0841.patch
+			Patch16: force_randomization.patch"
 	lts6_srpm_epatch || die
 
 	epunt_cxx
