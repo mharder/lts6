@@ -1,0 +1,227 @@
+diff -Naur acl-2.2.49.a//exports acl-2.2.49.b//exports
+--- acl-2.2.49.a//exports	2009-06-22 13:37:31.000000000 -0500
++++ acl-2.2.49.b//exports	2012-03-19 14:46:06.166358208 -0500
+@@ -83,3 +83,9 @@
+ 	perm_copy_fd;
+ 	perm_copy_file;
+ } ACL_1.0;
++
++ACL_1.2 {
++    global:
++	# Linux specific extensions
++	acl_extended_file_nofollow;
++} ACL_1.1;
+diff -Naur acl-2.2.49.a//include/libacl.h acl-2.2.49.b//include/libacl.h
+--- acl-2.2.49.a//include/libacl.h	2009-06-22 13:37:31.000000000 -0500
++++ acl-2.2.49.b//include/libacl.h	2012-03-19 14:46:06.162358208 -0500
+@@ -59,6 +59,7 @@
+ extern acl_t acl_from_mode(mode_t mode);
+ extern int acl_equiv_mode(acl_t acl, mode_t *mode_p);
+ int acl_extended_file(const char *path_p);
++int acl_extended_file_nofollow(const char *path_p);
+ int acl_extended_fd(int fd);
+ extern int acl_entries(acl_t acl);
+ extern const char *acl_error(int code);
+diff -Naur acl-2.2.49.a//libacl/Makefile acl-2.2.49.b//libacl/Makefile
+--- acl-2.2.49.a//libacl/Makefile	2009-06-22 13:37:31.000000000 -0500
++++ acl-2.2.49.b//libacl/Makefile	2012-03-19 14:46:06.162358208 -0500
+@@ -47,7 +47,8 @@
+ 
+ LIBACL_CFILES = \
+ 	acl_to_any_text.c acl_entries.c acl_check.c acl_error.c acl_cmp.c \
+-	acl_extended_fd.c acl_extended_file.c acl_equiv_mode.c acl_from_mode.c
++	acl_extended_fd.c acl_extended_file.c acl_equiv_mode.c acl_from_mode.c \
++	acl_extended_file_nofollow.c __acl_extended_file.c
+ 
+ INTERNAL_CFILES = \
+ 	__acl_to_any_text.c __acl_to_xattr.c __acl_from_xattr.c \
+diff -Naur acl-2.2.49.a//libacl/__acl_extended_file.c acl-2.2.49.b//libacl/__acl_extended_file.c
+--- acl-2.2.49.a//libacl/__acl_extended_file.c	1969-12-31 18:00:00.000000000 -0600
++++ acl-2.2.49.b//libacl/__acl_extended_file.c	2012-03-19 14:46:06.166358208 -0500
+@@ -0,0 +1,50 @@
++/*
++  File: __acl_extended_file.c
++
++  Copyright (C) 2000, 2011
++  Andreas Gruenbacher, <a.gruenbacher@bestbits.at>
++
++  This program is free software; you can redistribute it and/or
++  modify it under the terms of the GNU Lesser General Public
++  License as published by the Free Software Foundation; either
++  version 2.1 of the License, or (at your option) any later version.
++
++  This program is distributed in the hope that it will be useful,
++  but WITHOUT ANY WARRANTY; without even the implied warranty of
++  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++  Lesser General Public License for more details.
++
++  You should have received a copy of the GNU Lesser General Public
++  License along with this library; if not, write to the Free Software
++  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
++*/
++
++#include <unistd.h>
++#include <attr/xattr.h>
++#include "libacl.h"
++
++#include "byteorder.h"
++#include "acl_ea.h"
++#include "__acl_extended_file.h"
++
++
++int
++__acl_extended_file(const char *path_p,
++		    ssize_t (*fun)(const char *, const char *,
++				   void *, size_t))
++{
++	int base_size = sizeof(acl_ea_header) + 3 * sizeof(acl_ea_entry);
++	int retval;
++
++	retval = fun(path_p, ACL_EA_ACCESS, NULL, 0);
++	if (retval < 0 && errno != ENOATTR && errno != ENODATA)
++		return -1;
++	if (retval > base_size)
++		return 1;
++	retval = fun(path_p, ACL_EA_DEFAULT, NULL, 0);
++	if (retval < 0 && errno != ENOATTR && errno != ENODATA)
++		return -1;
++	if (retval >= base_size)
++		return 1;
++	return 0;
++}
+diff -Naur acl-2.2.49.a//libacl/__acl_extended_file.h acl-2.2.49.b//libacl/__acl_extended_file.h
+--- acl-2.2.49.a//libacl/__acl_extended_file.h	1969-12-31 18:00:00.000000000 -0600
++++ acl-2.2.49.b//libacl/__acl_extended_file.h	2012-03-19 14:46:06.167358207 -0500
+@@ -0,0 +1,3 @@
++int __acl_extended_file(const char *path_p,
++			ssize_t (*)(const char *, const char *,
++				    void *, size_t));
+diff -Naur acl-2.2.49.a//libacl/acl_extended_file.c acl-2.2.49.b//libacl/acl_extended_file.c
+--- acl-2.2.49.a//libacl/acl_extended_file.c	2009-06-22 13:37:31.000000000 -0500
++++ acl-2.2.49.b//libacl/acl_extended_file.c	2012-03-19 14:46:06.164358209 -0500
+@@ -1,7 +1,7 @@
+ /*
+   File: acl_extended_file.c
+ 
+-  Copyright (C) 2000
++  Copyright (C) 2011
+   Andreas Gruenbacher, <a.gruenbacher@bestbits.at>
+ 
+   This program is free software; you can redistribute it and/or
+@@ -23,26 +23,12 @@
+ #include <attr/xattr.h>
+ #include "libacl.h"
+ 
+-#include "byteorder.h"
+-#include "acl_ea.h"
++#include "__acl_extended_file.h"
+ 
+ 
+ int
+ acl_extended_file(const char *path_p)
+ {
+-	int base_size = sizeof(acl_ea_header) + 3 * sizeof(acl_ea_entry);
+-	int retval;
+-
+-	retval = getxattr(path_p, ACL_EA_ACCESS, NULL, 0);
+-	if (retval < 0 && errno != ENOATTR && errno != ENODATA)
+-		return -1;
+-	if (retval > base_size)
+-		return 1;
+-	retval = getxattr(path_p, ACL_EA_DEFAULT, NULL, 0);
+-	if (retval < 0 && errno != ENOATTR && errno != ENODATA)
+-		return -1;
+-	if (retval >= base_size)
+-		return 1;
+-	return 0;
++	return __acl_extended_file(path_p, getxattr);
+ }
+ 
+diff -Naur acl-2.2.49.a//libacl/acl_extended_file_nofollow.c acl-2.2.49.b//libacl/acl_extended_file_nofollow.c
+--- acl-2.2.49.a//libacl/acl_extended_file_nofollow.c	1969-12-31 18:00:00.000000000 -0600
++++ acl-2.2.49.b//libacl/acl_extended_file_nofollow.c	2012-03-19 14:46:06.167358207 -0500
+@@ -0,0 +1,33 @@
++/*
++  File: acl_extended_file_nofollow.c
++
++  Copyright (C) 2011
++  Andreas Gruenbacher, <a.gruenbacher@bestbits.at>
++
++  This program is free software; you can redistribute it and/or
++  modify it under the terms of the GNU Lesser General Public
++  License as published by the Free Software Foundation; either
++  version 2.1 of the License, or (at your option) any later version.
++
++  This program is distributed in the hope that it will be useful,
++  but WITHOUT ANY WARRANTY; without even the implied warranty of
++  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++  Lesser General Public License for more details.
++
++  You should have received a copy of the GNU Lesser General Public
++  License along with this library; if not, write to the Free Software
++  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
++*/
++
++#include <unistd.h>
++#include <attr/xattr.h>
++#include "libacl.h"
++
++#include "__acl_extended_file.h"
++
++
++int
++acl_extended_file_nofollow(const char *path_p)
++{
++	return __acl_extended_file(path_p, lgetxattr);
++}
+diff -Naur acl-2.2.49.a//man/man3/acl_extended_file.3 acl-2.2.49.b//man/man3/acl_extended_file.3
+--- acl-2.2.49.a//man/man3/acl_extended_file.3	2009-06-22 13:37:31.000000000 -0500
++++ acl-2.2.49.b//man/man3/acl_extended_file.3	2012-03-19 14:46:06.167358207 -0500
+@@ -25,7 +25,7 @@
+ .Dt ACL_EXTENDED_FILE 3
+ .Os "Linux ACL"
+ .Sh NAME
+-.Nm acl_extended_file
++.Nm acl_extended_file, acl_extended_file_nofollow
+ .Nd test for information in ACLs by file name
+ .Sh LIBRARY
+ Linux Access Control Lists library (libacl, \-lacl).
+@@ -34,6 +34,8 @@
+ .In acl/libacl.h
+ .Ft int
+ .Fn acl_extended_file "const char *path_p"
++.Ft int
++.Fn acl_extended_file_nofollow "const char *path_p"
+ .Sh DESCRIPTION
+ The
+ .Fn acl_extended_file
+@@ -61,6 +63,13 @@
+ .Xr access 2
+ system call can be used to check whether a given type of access to a file
+ object would be granted.
++.Pp
++.Fn acl_extended_file_nofollow
++is identical to
++.Fn acl_extended_file ,
++except in the case of a symbolic link, where the link itself is interrogated,
++not the file that it refers to.  Since symbolic links have no ACL themselves,
++the operation is supposed to fail on them.
+ .Sh RETURN VALUE
+ If successful, the
+ .Fn acl_extended_file
+diff -Naur acl-2.2.49.a//man/man3/acl_extended_file_nofollow.3 acl-2.2.49.b//man/man3/acl_extended_file_nofollow.3
+--- acl-2.2.49.a//man/man3/acl_extended_file_nofollow.3	1969-12-31 18:00:00.000000000 -0600
++++ acl-2.2.49.b//man/man3/acl_extended_file_nofollow.3	2012-03-19 14:46:06.168358206 -0500
+@@ -0,0 +1 @@
++.so man3/acl_extended_file.3
+diff -Naur acl-2.2.49.a//man/man5/acl.5 acl-2.2.49.b//man/man5/acl.5
+--- acl-2.2.49.a//man/man5/acl.5	2009-06-22 13:37:31.000000000 -0500
++++ acl-2.2.49.b//man/man5/acl.5	2012-03-19 14:46:06.165358208 -0500
+@@ -497,6 +497,7 @@
+ .Xr acl_error 3 ,
+ .Xr acl_extended_fd 3 ,
+ .Xr acl_extended_file 3 ,
++.Xr acl_extended_file_nofollow 3 ,
+ .Xr acl_from_mode 3 ,
+ .Xr acl_get_perm 3 ,
+ .Xr acl_to_any_text 3
