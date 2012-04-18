@@ -10,8 +10,8 @@ MY_P=${P/_}
 
 DESCRIPTION="The Common Unix Printing System."
 HOMEPAGE="http://www.cups.org/"
-SRPM="cups-1.4.2-39.el6_1.1.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}"
+SRPM="cups-1.4.2-44.el6_2.3.src.rpm"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
 LICENSE="GPL-2"
@@ -129,7 +129,6 @@ Patch49: cups-snmp-quirks.patch
 Patch50: cups-str3458.patch
 Patch51: cups-str3460.patch
 Patch52: cups-str3495.patch
-Patch53: cups-EAI_AGAIN.patch
 Patch54: cups-str3505.patch
 Patch55: cups-CVE-2010-0302.patch
 Patch56: cups-str3541.patch
@@ -151,7 +150,15 @@ Patch71: cups-0755.patch
 Patch72: cups-undo-str2537.patch
 Patch73: cups-dns-failure-tolerance.patch
 Patch74: cups-snmp-conf-typo.patch
-Patch75: cups-str3795-str3880.patch"
+Patch75: cups-str3832.patch
+Patch76: cups-str3861.patch
+Patch77: cups-str3809.patch
+Patch78: cups-str3867.patch
+Patch79: cups-str3795-str3880.patch
+Patch80: cups-handle-empty-files.patch
+Patch81: cups-str4015.patch
+Patch82: cups-str3449.patch"
+
 
 pkg_setup() {
 	enewgroup lp
