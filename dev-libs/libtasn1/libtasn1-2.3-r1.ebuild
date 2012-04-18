@@ -8,7 +8,7 @@ inherit rpm lts6-rpm
 
 DESCRIPTION="ASN.1 library"
 HOMEPAGE="http://www.gnu.org/software/libtasn1/"
-SRPM="libtasn1-2.3-3.el6.src.rpm"
+SRPM="libtasn1-2.3-3.el6_2.1.src.rpm"
 SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
@@ -29,7 +29,8 @@ src_unpack() {
 
 src_prepare() {
 	cd "${S}"
-	SRPM_PATCHLIST="Patch0: libtasn1-2.4-rpath.patch"
+	SRPM_PATCHLIST="Patch1:         libtasn1-2.4-rpath.patch
+			Patch2:         libtasn1-2.3-cve-2012-1569.patch"
 	lts6_srpm_epatch || die
 }
 
