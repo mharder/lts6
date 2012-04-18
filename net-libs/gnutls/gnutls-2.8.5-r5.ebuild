@@ -9,8 +9,8 @@ inherit autotools libtool rpm lts6-rpm
 DESCRIPTION="A TLS 1.0 and SSL 3.0 implementation for the GNU project"
 HOMEPAGE="http://www.gnutls.org/"
 
-SRPM="gnutls-2.8.5-4.el6.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}"
+SRPM="gnutls-2.8.5-4.el6_2.2.src.rpm"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
 # GPL-3 for the gnutls-extras library and LGPL for the gnutls library.
