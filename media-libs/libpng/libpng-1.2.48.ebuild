@@ -8,8 +8,8 @@ inherit eutils libtool multilib rpm lts6-rpm
 
 DESCRIPTION="Portable Network Graphics library"
 HOMEPAGE="http://www.libpng.org/"
-SRPM="libpng-1.2.46-1.el6_1.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}"
+SRPM="libpng-1.2.48-1.el6_2.src.rpm"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
 LICENSE="as-is"
@@ -21,7 +21,7 @@ RDEPEND="sys-libs/zlib
 	!=media-libs/libpng-1.2*:1.2"
 DEPEND="${RDEPEND}"
 
-DOCS=( ANNOUNCE CHANGES example.c libpng-1.2.46.txt README TODO )
+DOCS=( ANNOUNCE CHANGES example.c libpng-${PV}.txt README TODO )
 
 src_unpack() {
 	rpm_src_unpack || die
