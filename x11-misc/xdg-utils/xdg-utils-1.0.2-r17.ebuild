@@ -2,9 +2,9 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/x11-misc/xdg-utils/Attic/xdg-utils-1.0.2_p20101101.ebuild,v 1.2 2010/11/03 23:56:22 ssuominen Exp $
 
-inherit rpm lts6-rpm
-
 EAPI="4"
+
+inherit rpm lts6-rpm
 
 DESCRIPTION="Portland utils for cross-platform/cross-toolkit/cross-desktop interoperability"
 HOMEPAGE="http://portland.freedesktop.org/"
