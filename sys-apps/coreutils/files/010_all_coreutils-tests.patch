@@ -1,0 +1,26 @@
+this test only gets run as non-root, so giving it temp write access to the
+root dir is safe since normal unix access will deny it #259876
+--- a/tests/touch/not-owner
++++ b/tests/touch/not-owner
+@@ -39,6 +39,7 @@
+ # Before fileutils-4.1, we'd get the following misleading
+ # diagnostic instead of `...: Permission denied'.
+ # touch: creating `/': Is a directory
++env SANDBOX_WRITE=${SANDBOX_WRITE}:/ \
+ touch / > out 2>&1 && fail=1
+ 
+ # On SunOS4, EPERM is `Not owner'.
+
+the dd test looks up a device and tries to test seeking on it.  it shouldnt
+cause any corruption because it uses a count of 0 and seeks past the end of
+the device
+--- a/tests/dd/skip-seek-past-dev
++++ b/tests/dd/skip-seek-past-dev
+@@ -53,6 +53,7 @@
+ 0+0 records out" > err_ok || framework_failure
+ compare err_ok err || fail=1
+ 
++env SANDBOX_WRITE=${SANDBOX_WRITE}:$device \
+ timeout 1 dd bs=1 seek=$DEV_OFLOW count=0 status=noxfer > "$device" 2> err
+ test "$?" = "1" || fail=1
+ echo "dd: \`standard output': cannot seek: Invalid argument
