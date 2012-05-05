@@ -16,7 +16,7 @@ SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x86-fbsd"
 IUSE=""
 
-RDEPEND=">=dev-libs/glib-2.6:2
+RDEPEND=">=dev-libs/glib-2
 	>=dev-libs/libxml2-2.4"
 DEPEND="${RDEPEND}
 	dev-util/pkgconfig
