@@ -10,13 +10,13 @@ REV="1.7"
 DESCRIPTION="full-strength general purpose cryptography library (including SSL v2/v3 and TLS v1)"
 HOMEPAGE="http://www.openssl.org/"
 
-SRPM="openssl-1.0.0-20.el6_2.3.src.rpm"
+SRPM="openssl-1.0.0-20.el6_2.4.src.rpm"
 SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
 LICENSE="openssl"
 SLOT="0"
-KEYWORDS="alpha amd64 arm hppa ia64 m68k ~mips ppc ppc64 s390 sh sparc x86 ~sparc-fbsd ~x86-fbsd"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~sparc-fbsd ~x86-fbsd"
 IUSE="bindist elfips gmp kerberos rfc3779 sse2 test zlib"
 
 RDEPEND="gmp? ( dev-libs/gmp )
@@ -88,7 +88,8 @@ Patch71: openssl-1.0.0-cve-2011-4577.patch
 Patch72: openssl-1.0.0-cve-2011-4619.patch
 Patch73: openssl-1.0.0-modes-unaligned.patch
 Patch74: openssl-1.0.0-cve-2012-0884.patch
-Patch75: openssl-1.0.0-cve-2012-1165.patch"
+Patch75: openssl-1.0.0-cve-2012-1165.patch
+Patch76: openssl-1.0.0-cve-2012-2110.patch"
 
 pkg_setup() {
 	if ! use bindist; then
