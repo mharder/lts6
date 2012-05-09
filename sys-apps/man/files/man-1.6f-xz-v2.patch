@@ -1,0 +1,131 @@
+add support for xz
+
+http://bugs.gentoo.org/302380
+
+diff -Naur a/configure b/configure
+--- a/configure	2012-05-08 13:36:17.205193159 -0500
++++ b/configure	2012-05-08 13:38:55.777199246 -0500
+@@ -1012,7 +1012,7 @@
+ 		echo $compress
+ 	else
+ 	    compress=
+-	    for i in lzma bzip2 gzip bzip tzip pack compress freeze yabba
++	    for i in xz lzma bzip2 gzip bzip tzip pack compress freeze yabba
+ 	    do
+ 	      eval F$i=missing
+ 	      for j in $DEFPATH
+@@ -1071,6 +1071,7 @@
+       *gzip*) ext=".gz" ;;
+       *bzip*) ext=".bz" ;;
+       *tzip*) ext=".tz" ;;
++      *xz*) ext=".xz" ;;
+       *pack*) ext=".z" ;;
+       *compress*) ext=".Z" ;;
+       *freeze*) ext=".F" ;;
+@@ -1109,7 +1110,7 @@
+ fi
+ 
+ # unconditionally handle uncompression
+-UNCOMPRESSORS="unlzma gunzip bzip2 pcat zcat fcat unyabba"
++UNCOMPRESSORS="unxz unlzma gunzip bzip2 pcat zcat fcat unyabba"
+ for i in $UNCOMPRESSORS
+ do
+   eval F$i=missing
+@@ -1134,6 +1135,10 @@
+ if [ $Funlzma != missing ]; then
+   unlzma="$Funlzma -c -d"
+ fi
++unxz=missing
++if [ $Funxz != missing ]; then
++  unxz="$Funxz -c -d"
++fi
+ pcat="$Fpcat"
+ zcat="$Fzcat"
+ fcat="$Ffcat"
+@@ -1165,6 +1170,9 @@
+ 	lzma)
+ 	  echo "Command to use for .lzma files (standard lzma)"
+ 	  echo $n "[`eval echo \\$$filter`] $c" ;;
++	xz)
++	  echo "Command to use for .xz files (standard xz)"
++	  echo $n "[`eval echo \\$$filter`] $c" ;;
+         pcat)
+           echo "Command to use for .z files (pack/unpack)"
+           echo $n "[`eval echo \\$$filter`] $c" ;;
+@@ -1227,6 +1235,7 @@
+   .gz) decompress=$gunzip ;;
+   .bz2) decompress=$bzip2 ;;
+   .lzma) decompress=$unlzma ;;
++  .xz) decompress=$unxz ;;
+   .z) decompress=$pcat ;;
+   .Z) decompress=$zcat ;;
+   .F) decompress=$fcat ;;
+@@ -1318,6 +1327,7 @@
+ s,@gunzip@,$gunzip,
+ s,@bzip2@,$bzip2,
+ s,@unlzma@,$unlzma,
++s,@unxz@,$unxz,
+ s,@unyabba@,$unyabba,
+ s,@compress@,$compress,
+ s,@compress_ext@,$compress_ext,
+diff -Naur a/src/makewhatis.sh b/src/makewhatis.sh
+--- a/src/makewhatis.sh	2012-05-08 13:36:16.782193143 -0500
++++ b/src/makewhatis.sh	2012-05-08 13:43:21.006209442 -0500
+@@ -223,7 +223,7 @@
+             find $mandir/${pages}$i -name '*' $findarg0 $findarg | $AWK '
+ 
+ 	    function readline() {
+-              if (use_zcat || use_bzcat || use_lzcat) {
++              if (use_zcat || use_bzcat || use_lzcat || use_xzcat) {
+ 		result = (pipe_cmd | getline);
+ 		if (result < 0) {
+ 		  print "Pipe error: " pipe_cmd " " ERRNO > "/dev/stderr";
+@@ -238,7 +238,7 @@
+ 	    }
+ 	    
+ 	    function closeline() {
+-              if (use_zcat || use_bzcat || use_lzcat) {
++              if (use_zcat || use_bzcat || use_lzcat || use_xzcat) {
+ 		return close(pipe_cmd);
+ 	      } else {
+ 		return close(filename);
+@@ -259,7 +259,9 @@
+ 		use_bzcat = match(filename,"\\.bz2");
+               if(!use_bzcat && !use_zcat)
+                 use_lzcat = match(filename,"\\.lzma");
+-              if (use_zcat || use_bzcat || use_lzcat ) {
++              if(!use_lzcat)
++                use_xzcat = match(filename,"\\.xz");
++              if (use_zcat || use_bzcat || use_lzcat || use_xzcat) {
+ 		filename_no_gz = substr(filename, 0, RSTART - 1);
+ 	      } else {
+ 		filename_no_gz = filename;
+@@ -272,13 +274,15 @@
+ 		actual_section = section;
+ 	      }
+ 	      sub(/\..*/, "", progname);
+-              if (use_zcat || use_bzcat || use_lzcat) {
++              if (use_zcat || use_bzcat || use_lzcat || use_xzcat) {
+ 		if (use_zcat) {
+ 		  pipe_cmd = "zcat \"" filename "\" 2>/dev/null";
+                 } else if (use_bzcat) {
+ 		  pipe_cmd = "bzcat \"" filename "\" 2>/dev/null";
+-                } else {
++                } else if (use_lzcat) {
+                   pipe_cmd = "lzcat \"" filename "\" 2>/dev/null";
++                } else {
++                  pipe_cmd = "xzcat \"" filename "\"";
+                 }
+                 # Chuck output unless it is utf-8
+                 pipe_cmd = pipe_cmd " |iconv -f utf-8 -t utf-8 2>/dev/null"
+diff -Naur a/src/man.conf.in b/src/man.conf.in
+--- a/src/man.conf.in	2012-05-08 13:36:16.922193149 -0500
++++ b/src/man.conf.in	2012-05-08 13:38:55.780199245 -0500
+@@ -132,6 +132,7 @@
+ .gz		/usr/bin/gunzip -c
+ .bz2		@bzip2@
+ .lzma		@unlzma@
++.xz		@unxz@
+ .z		@pcat@
+ .Z		@zcat@
+ .F		@fcat@
