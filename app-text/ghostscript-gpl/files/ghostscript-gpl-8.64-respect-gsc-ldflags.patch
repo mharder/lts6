@@ -1,0 +1,17 @@
+=== modified file 'base/unix-dll.mak'
+--- base/unix-dll.mak	2009-03-06 09:56:15 +0000
++++ base/unix-dll.mak	2009-03-07 17:41:54 +0000
+@@ -79,10 +79,10 @@
+ # Build the small Ghostscript loaders, with Gtk+ and without
+ 
+ $(GSSOC_XE): $(GS_SO) $(PSSRC)$(SOC_LOADER)
+-	$(GLCC) -g -o $(GSSOC_XE) $(PSSRC)dxmainc.c -L$(BINDIR) -l$(GS)
++	$(GLCC) -g $(LDFLAGS) -o $(GSSOC_XE) $(PSSRC)dxmainc.c -L$(BINDIR) -l$(GS)
+ 
+ $(GSSOX_XE): $(GS_SO) $(PSSRC)$(SOC_LOADER)
+-	$(GLCC) -g $(SOC_CFLAGS) -o $(GSSOX_XE) $(PSSRC)$(SOC_LOADER) \
++	$(GLCC) -g $(LDFLAGS) $(SOC_CFLAGS) -o $(GSSOX_XE) $(PSSRC)$(SOC_LOADER) \
+ 	-L$(BINDIR) -l$(GS) $(SOC_LIBS)
+ 
+ # ------------------------- Recursive make targets ------------------------- #
+
