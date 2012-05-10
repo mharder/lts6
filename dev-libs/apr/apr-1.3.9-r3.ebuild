@@ -27,14 +27,15 @@ src_unpack() {
 }
 
 src_prepare() {
-	# Ensure that system libtool is used.
-	sed -e 's:${installbuilddir}/libtool:/usr/bin/libtool:' -i apr-config.in || die "sed failed"
-	sed -e 's:@LIBTOOL@:$(SHELL) /usr/bin/libtool:' -i build/apr_rules.mk.in || die "sed failed"
-
+	# Omit the following EL patches:
+	# Patch3: apr-1.2.2-libdir.patch
+	# Patch4: apr-1.2.7-pkgconf.patch
+	#
+	# They customize directory locations in a manner that
+	# causes conflicts (specifically in building
+	# apr-utils) in the Gentoo build environment.
 	SRPM_PATCHLIST="Patch1: apr-0.9.7-deepbind.patch
 			Patch2: apr-1.2.2-locktimeout.patch
-			Patch3: apr-1.2.2-libdir.patch
-			Patch4: apr-1.2.7-pkgconf.patch
 			Patch10: apr-1.3.9-CVE-2011-0419.patch
 			Patch11: apr-1.2.7-fnmatch.patch"
 	lts6_srpm_epatch || die
