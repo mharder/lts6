@@ -18,9 +18,7 @@ SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86"
 IUSE=""
 
-RDEPEND="net-libs/libgssglue
-	 net-nds/openldap
-	 >=net-fs/nfs-utils-1.2.1"
+RDEPEND="net-libs/libgssglue"
 DEPEND="${RDEPEND}
 	virtual/pkgconfig"
 
