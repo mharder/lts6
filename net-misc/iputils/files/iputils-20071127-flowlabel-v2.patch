@@ -1,0 +1,68 @@
+diff -Naur iputils-s20071127.a/Makefile iputils-s20071127.b/Makefile
+--- iputils-s20071127.a/Makefile	2012-05-12 14:37:24.361466659 -0500
++++ iputils-s20071127.b/Makefile	2012-05-12 14:41:13.122475508 -0500
+@@ -31,7 +31,7 @@
+ tftpd: tftpd.o tftpsubs.o
+ ping: ping.o ping_common.o
+ ping6: ping6.o ping_common.o
+-ping.o ping6.o ping_common.o: ping_common.h
++ping.o ping6.o ping_common.o: ping_common.h in6_flowlabel.h
+ tftpd.o tftpsubs.o: tftp.h
+ 
+ rdisc_srv: rdisc_srv.o
+diff -Naur iputils-s20071127.a/in6_flowlabel.h iputils-s20071127.b/in6_flowlabel.h
+--- iputils-s20071127.a/in6_flowlabel.h	1969-12-31 18:00:00.000000000 -0600
++++ iputils-s20071127.b/in6_flowlabel.h	2012-05-12 14:39:22.577471176 -0500
+@@ -0,0 +1,40 @@
++/*
++   It is just a stripped copy of the kernel header "linux/in6.h"
++
++   "Flow label" things are still not defined in "netinet/in*.h" headers,
++   but we cannot use "linux/in6.h" immediately because it currently
++   conflicts with "netinet/in.h" .
++*/
++
++struct in6_flowlabel_req
++{
++	struct in6_addr	flr_dst;
++	__u32	flr_label;
++	__u8	flr_action;
++	__u8	flr_share;
++	__u16	flr_flags;
++	__u16 	flr_expires;
++	__u16	flr_linger;
++	__u32	__flr_pad;
++	/* Options in format of IPV6_PKTOPTIONS */
++};
++
++#define IPV6_FL_A_GET	0
++#define IPV6_FL_A_PUT	1
++#define IPV6_FL_A_RENEW	2
++
++#define IPV6_FL_F_CREATE	1
++#define IPV6_FL_F_EXCL		2
++
++#define IPV6_FL_S_NONE		0
++#define IPV6_FL_S_EXCL		1
++#define IPV6_FL_S_PROCESS	2
++#define IPV6_FL_S_USER		3
++#define IPV6_FL_S_ANY		255
++
++#define IPV6_FLOWINFO_FLOWLABEL		0x000fffff
++#define IPV6_FLOWINFO_PRIORITY		0x0ff00000
++
++#define IPV6_FLOWLABEL_MGR	32
++#define IPV6_FLOWINFO_SEND	33
++
+diff -Naur iputils-s20071127.a/ping6.c iputils-s20071127.b/ping6.c
+--- iputils-s20071127.a/ping6.c	2012-05-12 14:37:24.363466659 -0500
++++ iputils-s20071127.b/ping6.c	2012-05-12 14:39:22.579471202 -0500
+@@ -79,6 +79,8 @@
+ #include <netinet/ip6.h>
+ #include <netinet/icmp6.h>
+ 
++#include "in6_flowlabel.h"
++
+ #ifndef SOL_IPV6
+ #define SOL_IPV6 IPPROTO_IPV6
+ #endif
