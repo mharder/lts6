@@ -37,8 +37,6 @@ src_prepare() {
 
 	epatch "${FILESDIR}"/${PN}-2.1.2-slsh-libs.patch \
 		"${FILESDIR}"/${PN}-2.2.1.-uclibc-EL.patch
-
-	eautomake
 }
 
 src_configure() {
