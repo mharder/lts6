@@ -53,7 +53,7 @@ RDEPEND="${EXTERNAL_DEPEND}
 	dev-libs/expat
 	gbm? ( sys-fs/udev )
 	x11-libs/libICE
-	>=x11-libs/libX11-1.3.99.901
+	>=x11-libs/libX11-1.3
 	x11-libs/libXdamage
 	x11-libs/libXext
 	x11-libs/libXi
