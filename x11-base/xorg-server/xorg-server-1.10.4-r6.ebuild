@@ -22,7 +22,7 @@ RDEPEND=">=app-admin/eselect-opengl-1.0.8
 	media-libs/freetype
 	>=x11-apps/iceauth-1.0.2
 	>=x11-apps/rgb-1.0.3
-	>=x11-apps/xauth-1.0.3
+	>=x11-apps/xauth-1.0.2
 	x11-apps/xkbcomp
 	>=x11-libs/libpciaccess-0.8.0
 	>=x11-libs/libXau-1.0.4
