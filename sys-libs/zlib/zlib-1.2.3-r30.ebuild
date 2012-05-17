@@ -7,8 +7,8 @@ inherit autotools eutils flag-o-matic toolchain-funcs rpm lts6-rpm
 
 DESCRIPTION="Standard (de)compression library"
 HOMEPAGE="http://www.zlib.net/"
-SRPM="zlib-1.2.3-26.el6.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}"
+SRPM="zlib-1.2.3-27.el6.src.rpm"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
 LICENSE="ZLIB"
@@ -23,22 +23,11 @@ src_unpack() {
 }
 
 src_prepare () {
-	cd "${S}"
-
-	# lts6_rpm_spec_epatch "${WORKDIR}/${PN}.spec" || die
-	#
-	# Automatically applying all SRPM patches will not work
-	# for this ebuild
-
-	# To-Do: The following patch is used in EL to prepare
-	# the source for autotools.  I haven't sorted through
-	# the details of making this work, but it seems interesting.
-	epatch "${WORKDIR}/zlib-1.2.3-autotools.patch"
-
-	epatch "${WORKDIR}/minizip-1.2.3-malloc.patch"
-	# The zlib-1.2.3-pc_file.patch relies on the autotools patch
-	epatch "${WORKDIR}/zlib-1.2.3-pc_file.patch"
-	epatch "${WORKDIR}/zlib-1.2.3-622779.patch"
+	SRPM_PATCHLIST="Patch3: zlib-1.2.3-autotools.patch
+			Patch6: minizip-1.2.3-malloc.patch
+			Patch7: zlib-1.2.3-pc_file.patch
+			Patch8: zlib-1.2.3-622779.patch"
+	lts6_srpm_epatch || die
 
 	epatch "${FILESDIR}"/${P}-build.patch
 	epatch "${FILESDIR}"/${P}-visibility-support.patch #149929
@@ -61,6 +50,9 @@ echoit() { echo "$@"; "$@"; }
 
 src_configure() {
 	tc-export AR CC RANLIB
+
+	append-ldflags -Wl,-z,relro
+
 	case ${CHOST} in
 	*-mingw*|mingw*)
 		;;
