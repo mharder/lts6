@@ -47,7 +47,8 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~spar
 IUSE="afs bashlogger examples mem-scramble +net nls plugins vanilla"
 
 DEPEND=">=sys-libs/ncurses-5.2-r2
-	nls? ( virtual/libintl )"
+	nls? ( virtual/libintl )
+	virtual/yacc"
 RDEPEND="${DEPEND}
 	!<sys-apps/portage-2.1.7.16
 	!<sys-apps/paludis-0.26.0_alpha5"
