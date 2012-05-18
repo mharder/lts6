@@ -4,7 +4,7 @@
 
 EAPI="1"
 
-inherit eutils flag-o-matic toolchain-funcs multilib rpm lts6-rpm
+inherit autotools eutils flag-o-matic toolchain-funcs multilib rpm lts6-rpm
 
 # For implementing a SRPM EL-based ebuild, the bash-4.1_p2-r1
 # version from the CVS attic was merge with the current stable
@@ -106,6 +106,7 @@ src_unpack() {
 			Patch126: bash-4.1-broken_pipe.patch
 			Patch127: bash-4.1-manpage.patch"
 	lts6_srpm_epatch || die
+	eautoreconf
 }
 
 src_compile() {
