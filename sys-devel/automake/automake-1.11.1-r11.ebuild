@@ -6,19 +6,6 @@ EAPI="4"
 
 inherit eutils versionator rpm lts6-rpm
 
-# if [[ ${PV/_beta} == ${PV} ]]; then
-#	MY_P=${P}
-#	SRC_URI="mirror://gnu/${PN}/${P}.tar.bz2"
-# else
-#	MY_PV="$(get_major_version).$(($(get_version_component_range 2)-1))b"
-#	MY_P="${PN}-${MY_PV}"
-#
-#	# Alpha/beta releases are not distributed on the usual mirrors.
-#	SRC_URI="ftp://alpha.gnu.org/pub/gnu/${PN}/${MY_P}.tar.bz2"
-# fi
-
-# S="${WORKDIR}/${MY_P}"
-
 SRPM="automake-1.11.1-1.2.el6.src.rpm"
 SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
