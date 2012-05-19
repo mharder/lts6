@@ -1,0 +1,16 @@
+diff -Naur keyutils-1.4.a//Makefile keyutils-1.4.b//Makefile
+--- keyutils-1.4.a//Makefile	2012-05-19 08:51:56.959840676 -0500
++++ keyutils-1.4.b//Makefile	2012-05-19 08:53:38.019850895 -0500
+@@ -73,10 +73,10 @@
+ 
+ 
+ keyctl: keyctl.c keyutils.h Makefile $(DEVELLIB)
+-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< -L. -lkeyutils -Wl,-rpath,$(LIB)
++	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< -L. -lkeyutils $(RPATH)
+ 
+ request-key: request-key.c keyutils.h Makefile $(DEVELLIB)
+-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< -L. -lkeyutils -Wl,-rpath,$(LIB)
++	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< -L. -lkeyutils $(RPATH)
+ 
+ 
+ MAN1	:= $(DESTDIR)/usr/share/man/man1
