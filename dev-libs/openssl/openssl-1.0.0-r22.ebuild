@@ -108,23 +108,7 @@ src_unpack() {
 }
 
 src_prepare() {
-	local p q
-
-	set -- ${SRPM_PATCHLIST}
-	while [ "$1" ]; do
-		listatom=$1
-		if [[ "${listatom}" != *"atch"* ]]; then
-			die "SRPM_PATCHLIST error $1"
-		else
-			shift
-		fi
-		patch=$1
-		if [[ ! ${patch} ]]; then
-			die "Error parsing patch list!"
-		fi
-		epatch "${WORKDIR}/${patch}" || die
-	shift
-	done
+	lts6_srpm_epatch || die
 
 	epatch "${FILESDIR}"/${PN}-1.0.0a-ldflags.patch #327421
 	epatch "${FILESDIR}"/${PN}-1.0.0d-fbsd-amd64.patch #363089
