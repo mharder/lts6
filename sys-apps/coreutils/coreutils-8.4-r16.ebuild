@@ -106,6 +106,12 @@ src_prepare() {
 src_configure() {
 	tc-is-cross-compiler && [[ ${CHOST} == *linux* ]] && export fu_cv_sys_stat_statfs2_bsize=yes #311569
 
+	if use s390 ; then
+		append-flags "-fPIC -O1"
+	else
+		append-flags "-fpic"
+	fi
+		
 	use static && append-ldflags -static
 	use selinux || export ac_cv_{header_selinux_{context,flash,selinux}_h,search_setfilecon}=no #301782
 	# kill/uptime - procps
