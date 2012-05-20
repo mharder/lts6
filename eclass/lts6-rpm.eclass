@@ -52,22 +52,43 @@ lts6_rpm_spec_epatch() {
 # @DESCRIPTION:
 # Apply patches from a list formatted at "patch[##]: [patch_name].patch".
 # This facilitates copying a list of patches from a SRPM spec file.
-# The less mangling required when processing the spec file, the fewer
-# opportunities for error.
+# The past list can be copied directly, providing fewer opportunities
+# for error.
+#
+# This function expects the patch list to be supplied in the
+# SRPM_PATCHLIST variable.
 lts6_srpm_epatch() {
-	set -- ${SRPM_PATCHLIST}
-	while [ "$1" ]; do
+
+	if [[ ${#SRPM_PATCHLIST} -eq 0 ]] ; then
+		ewarn "WARNING: SRPM Patch List is Empty."
+	fi
+
+	# We need to switch between processing the list line-by-line,
+	# and parameter-by-parameter, so IFS is manipulated.
+	OIFS=${IFS}
+	LIFS="$(echo -e "\n\r")"
+
+	IFS=${LIFS}
+	for LINE in ${SRPM_PATCHLIST}; do
+		# Patches are expected to be composed of two parts,
+		# a patch identifier, like "Patch0:", and then
+		# the patch name itself.
+		IFS=${OIFS}
+		set -- ${LINE}
 		listatom=$1
 		if [[ "${listatom}" != *"atch"* ]]; then
-			die "SRPM_PATCHLIST error $1"
+			# Skip to next line if this is a comment
+			# or else die.
+			if [[ "${listatom:0:1}" != "#" ]] ; then
+				die "SRPM_PATCHLIST error $1"
+			fi
 		else
-			shift
+			patch=$2
+			epatch "${WORKDIR}/${patch}" || die
 		fi
-		patch=$1
-		if [[ ! ${patch} ]]; then
-			die "Error parsing patch list!"
-		fi
-		epatch "${WORKDIR}/${patch}" || die
-		shift
+		IFS=${LIFS}
 	done
+
+	# Reset IFS to it's original value
+	IFS=${OIFS}
 }
