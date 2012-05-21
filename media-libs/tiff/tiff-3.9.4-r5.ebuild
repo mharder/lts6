@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/media-libs/tiff/Attic/tiff-3.9.4-r1.ebuild,v 1.2 2011/04/23 16:38:13 nerdboy Exp $
 
-EAPI=3
+EAPI=4
 inherit eutils libtool rpm lts6-rpm
 
 DESCRIPTION="Library for manipulation of TIFF (Tag Image File Format) images"
@@ -17,19 +17,32 @@ SRPM="libtiff-3.9.4-5.el6_2.src.rpm"
 SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
-RDEPEND="jpeg? ( virtual/jpeg )
+RDEPEND="jpeg? ( || ( media-libs/jpeg:0 virtual/jpeg ) )
 	jbig? ( media-libs/jbigkit )
 	zlib? ( sys-libs/zlib )"
 
 DEPEND="${RDEPEND}"
 
-src_unpack() {
-	rpm_src_unpack || die
-	cd "${S}"
-	lts6_rpm_spec_epatch "${WORKDIR}"/libtiff.spec || die
-}
+SRPM_PATCHLIST="
+Patch1: libtiff-acversion.patch
+Patch2: libtiff-mantypo.patch
+Patch3: libtiff-scanlinesize.patch
+Patch4: libtiff-getimage-64bit.patch
+Patch5: libtiff-ycbcr-clamp.patch
+Patch6: libtiff-3samples.patch
+Patch7: libtiff-subsampling.patch
+Patch8: libtiff-unknown-fix.patch
+Patch9: libtiff-checkbytecount.patch
+Patch10: libtiff-tiffdump.patch
+Patch11: libtiff-CVE-2011-0192.patch
+Patch12: libtiff-CVE-2011-1167.patch
+Patch13: libtiff-CVE-2009-5022.patch
+Patch14: libtiff-CVE-2012-1173.patch
+"
 
 src_prepare() {
+	lts6_srpm_epatch || die
+
 	elibtoolize
 }
 
