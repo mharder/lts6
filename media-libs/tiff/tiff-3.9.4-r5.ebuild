@@ -17,7 +17,7 @@ SRPM="libtiff-3.9.4-5.el6_2.src.rpm"
 SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
-RDEPEND="jpeg? ( || ( media-libs/jpeg:0 virtual/jpeg ) )
+RDEPEND="jpeg? ( || ( virtual/jpeg-lts6 virtual/jpeg ) )
 	jbig? ( media-libs/jbigkit )
 	zlib? ( sys-libs/zlib )"
 
