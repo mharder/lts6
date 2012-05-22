@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/x11-libs/gtk+/Attic/gtk+-2.18.9.ebuild,v 1.10 2010/08/18 21:01:25 maekke Exp $
 
-EAPI="3"
+EAPI="4"
 
 inherit gnome.org flag-o-matic eutils libtool virtualx rpm lts6-rpm
 
@@ -15,10 +15,9 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sh ~sparc ~x86 ~x86-
 IUSE="aqua cups debug doc jpeg jpeg2k tiff test vim-syntax xinerama"
 
 SRPM="gtk2-2.18.9-6.el6.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
-# FIXME: configure says >=xrandr-1.2.99 but remi tells me it's broken
 # NOTE: cairo[svg] dep is due to bug 291283 (not patched to avoid eautoreconf)
 RDEPEND="!aqua? (
 		x11-libs/libXrender
@@ -26,7 +25,7 @@ RDEPEND="!aqua? (
 		x11-libs/libXi
 		x11-libs/libXt
 		x11-libs/libXext
-		>=x11-libs/libXrandr-1.2
+		>=x11-libs/libXrandr-1.2.99
 		x11-libs/libXcursor
 		x11-libs/libXfixes
 		x11-libs/libXcomposite
@@ -44,7 +43,7 @@ RDEPEND="!aqua? (
 	x11-misc/shared-mime-info
 	>=media-libs/libpng-1.2.43-r2:0
 	cups? ( net-print/cups )
-	jpeg? ( virtual/jpeg )
+	jpeg? ( || ( virtual/jpeg-lts6 virtual/jpeg ) )
 	jpeg2k? ( media-libs/jasper )
 	tiff? ( >=media-libs/tiff-3.5.7 )
 	!<gnome-base/gail-1000"
@@ -69,19 +68,57 @@ DEPEND="${RDEPEND}
 		media-fonts/font-cursor-misc )"
 PDEPEND="vim-syntax? ( app-vim/gtk-syntax )"
 
+SRPM_PATCHLIST="
+# Biarch changes
+Patch0: gtk-lib64.patch
+Patch1: system-python.patch
+# https://bugzilla.gnome.org/show_bug.cgi?id=583273
+Patch2: icon-padding.patch
+# https://bugzilla.gnome.org/show_bug.cgi?id=599617
+Patch4: fresh-tooltips.patch
+# from upstream
+Patch5: allow-set-hint.patch
+# https://bugzilla.gnome.org/show_bug.cgi?id=599618
+Patch8: tooltip-positioning.patch
+# http://bugzilla.redhat.com/show_bug.cgi?id=529364
+Patch11: gtk2-remove-connecting-reason.patch
+# https://bugzilla.gnome.org/show_bug.cgi?id=592582
+Patch12: gtk2-preview.patch
+Patch13: gtk2-rotate-layout.patch
+Patch14: gtk2-landscape-pdf-print.patch
+# https://bugzilla.gnome.org/show_bug.cgi?id=600992
+Patch15: filesystemref.patch
+# from upstream
+Patch16: o-minus.patch
+# from upstream
+Patch17: strftime-format.patch
+# from upstream
+Patch18: 0001-Avoid-spurious-notifications-from-GtkEntry.patch
+# from upstream
+Patch19: 0001-Prevent-the-destruction-of-the-menu-label-on-page-re.patch
+# from upstream
+Patch20: 0002-Yet-another-fix-for-shape-handling.patch
+Patch23: gtk2-ppd-reading.patch
+# updated translations
+# https://bugzilla.redhat.com/show_bug.cgi?id=589238
+Patch24: gtk2-translations.patch
+
+# https://bugzilla.redhat.com/show_bug.cgi?id=636476
+Patch25: gtk2-translations-gu.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=625440
+Patch26: gtk2-translations-mr-te.patch
+# https://bugzilla.redhat.com/show_bug.cgi?id=647922
+Patch27: gtk2-filechooser-empty-location.patch
+"
+
 set_gtk2_confdir() {
 	# An arch specific config directory is used on multilib systems
 	has_multilib_profile && GTK2_CONFDIR="/etc/gtk-2.0/${CHOST}"
 	GTK2_CONFDIR=${GTK2_CONFDIR:=/etc/gtk-2.0}
 }
 
-src_unpack() {
-	rpm_src_unpack || die
-}
-
 src_prepare() {
-	cd "${S}"
-	lts6_rpm_spec_epatch "${WORKDIR}/${PN}.spec" || die
+	lts6_srpm_epatch || die
 
 	# use an arch-specific config directory so that 32bit and 64bit versions
 	# dont clash on multilib systems
