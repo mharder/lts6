@@ -1,0 +1,37 @@
+the SONAME upstream was bumped to try and sort out the 1.19.x/1.20.x mess, but
+since we've always had 1.20.x in our tree, we dont care about that breakage.
+
+http://lists.linux.it/pipermail/gpm/2008-June/001026.html
+http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=473496
+
+Updated May 12, 2012 by mitch.harder@sabayonlinux.org
+to cover the configure.ac file as well as the configure file
+to make the patch robust to autotools.
+diff -Naur gpm-1.20.6.a/configure gpm-1.20.6.b/configure
+--- gpm-1.20.6.a/configure	2009-02-09 03:59:25.000000000 -0600
++++ gpm-1.20.6.b/configure	2012-05-22 11:57:50.736418609 -0500
+@@ -1865,8 +1865,8 @@
+ #
+ # Versioning stuff
+ #
+-abi_lev="2"
+-abi_age="1"
++abi_lev="1"
++abi_age="20"
+ abi_rev="0"
+ abi_full="${abi_lev}.${abi_age}.${abi_rev}"
+ 
+diff -Naur gpm-1.20.6.a/configure.ac gpm-1.20.6.b/configure.ac
+--- gpm-1.20.6.a/configure.ac	2009-02-09 03:58:53.000000000 -0600
++++ gpm-1.20.6.b/configure.ac	2012-05-22 11:58:10.447419330 -0500
+@@ -23,8 +23,8 @@
+ #
+ # Versioning stuff
+ #
+-abi_lev="2"
+-abi_age="1"
++abi_lev="1"
++abi_age="20"
+ abi_rev="0"
+ abi_full="${abi_lev}.${abi_age}.${abi_rev}"
+ 
