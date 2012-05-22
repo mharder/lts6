@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/media-libs/lcms/lcms-1.19.ebuild,v 1.10 2011/02/26 18:18:37 arfrever Exp $
 
-EAPI="3"
+EAPI="4"
 PYTHON_DEPEND="python? 2"
 SUPPORT_PYTHON_ABIS="1"
 RESTRICT_PYTHON_ABIS="3.* *-jython"
@@ -18,11 +18,11 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86
 IUSE="jpeg python static-libs tiff zlib"
 
 SRPM="lcms-1.19-1.el6.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
 RDEPEND="tiff? ( media-libs/tiff )
-	jpeg? ( virtual/jpeg )
+	jpeg? ( || ( virtual/jpeg-lts6 virtual/jpeg ) )
 	zlib? ( sys-libs/zlib )"
 DEPEND="${RDEPEND}
 	python? ( >=dev-lang/swig-1.3.31 )"
@@ -31,10 +31,6 @@ pkg_setup() {
 	if use python; then
 		python_pkg_setup
 	fi
-}
-
-src_unpack() {
-        rpm_src_unpack || die
 }
 
 src_prepare() {
