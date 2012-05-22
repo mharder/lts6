@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/media-libs/libmng/libmng-1.0.10-r1.ebuild,v 1.8 2011/10/23 17:18:07 ssuominen Exp $
 
-EAPI=3
+EAPI=4
 inherit autotools rpm lts6-rpm
 
 DESCRIPTION="Multiple Image Networkgraphics lib (animated png's)"
@@ -14,17 +14,13 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sh ~sparc ~x86 ~x86-
 IUSE="lcms static-libs"
 
 SRPM="libmng-1.0.10-4.1.el6.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
-RDEPEND="virtual/jpeg
+RDEPEND="|| ( virtual/jpeg-lts6 virtual/jpeg )
 	>=sys-libs/zlib-1.1.4
 	lcms? ( =media-libs/lcms-1* )"
 DEPEND="${RDEPEND}"
-
-src_unpack() {
-        rpm_src_unpack || die
-}
 
 src_prepare() {
 	ln -s makefiles/configure.in .
