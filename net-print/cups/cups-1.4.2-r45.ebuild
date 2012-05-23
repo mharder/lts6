@@ -1,4 +1,4 @@
-# Copyright 1999-2010 Gentoo Foundation
+# Copyright 1999-2012 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/net-print/cups/Attic/cups-1.4.2-r1.ebuild,v 1.5 2010/03/08 22:20:59 reavertm Exp $
 
@@ -22,7 +22,7 @@ IUSE="acl dbus debug gnutls java +jpeg kerberos ldap pam perl php +png python sa
 COMMON_DEPEND="
 	app-text/libpaper
 	dev-libs/libgcrypt
-	dev-libs/libusb
+	virtual/libusb
 	acl? (
 		kernel_linux? (
 			sys-apps/acl
@@ -50,19 +50,12 @@ COMMON_DEPEND="
 DEPEND="${COMMON_DEPEND}"
 
 RDEPEND="${COMMON_DEPEND}
-	!net-print/cupsddk
-	!virtual/lpr
 	X? ( x11-misc/xdg-utils )
 "
 PDEPEND="
-	|| (
-		app-text/ghostscript-gpl[cups]
-		app-text/ghostscript-gnu[cups]
-	)
+	app-text/ghostscript-gpl[cups]
 	>=app-text/poppler-0.12.3-r3[utils]
 "
-
-PROVIDE="virtual/lpr"
 
 # upstream includes an interactive test which is a nono for gentoo.
 # therefore, since the printing herd has bigger fish to fry, for now,
@@ -78,7 +71,8 @@ done
 
 # Omit the cups-lspp.patch and the cups-serverbin-compat.patch.
 # To Do: Revisit the possibility of including these patches.
-SRPM_PATCHLIST="Patch1: cups-no-gzip-man.patch
+SRPM_PATCHLIST="
+Patch1: cups-no-gzip-man.patch
 Patch2: cups-1.1.16-system-auth.patch
 Patch3: cups-multilib.patch
 Patch4: cups-serial.patch
@@ -157,8 +151,8 @@ Patch78: cups-str3867.patch
 Patch79: cups-str3795-str3880.patch
 Patch80: cups-handle-empty-files.patch
 Patch81: cups-str4015.patch
-Patch82: cups-str3449.patch"
-
+Patch82: cups-str3449.patch
+"
 
 pkg_setup() {
 	enewgroup lp
@@ -171,11 +165,6 @@ src_unpack() {
 }
 
 src_prepare() {
-	# The last patch (cups-lspp.patch) is causing problems,
-	# so the patches need to be enumerated."
-	cd "${S}"
-	# lts6_rpm_spec_epatch "${WORKDIR}/${PN}.spec" || die
-
 	lts6_srpm_epatch || die
 
 	# create a missing symlink to allow https printing via IPP, bug #217293
