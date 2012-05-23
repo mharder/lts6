@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/app-arch/bzip2/Attic/bzip2-1.0.5-r1.ebuild,v 1.8 2010/08/14 20:05:30 truedfx Exp $
 
-EAPI="2"
+EAPI="4"
 
 inherit eutils multilib toolchain-funcs flag-o-matic rpm lts6-rpm
 
@@ -15,14 +15,21 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~spar
 IUSE="static"
 
 SRPM="bzip2-1.0.5-7.el6_0.src.rpm"
-SRC_URI="http://ftp.scientificlinux.org/linux/scientific/6.1/SRPMS/vendor/${SRPM}"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
+RESTRICT="mirror"
 
 DEPEND=""
 
-src_unpack() {
-	rpm_src_unpack || die
-	cd "${S}"
-	lts6_rpm_spec_epatch "${WORKDIR}/${PN}.spec" || die
+SRPM_PATCHLIST="
+Patch0: bzip2-1.0.4-saneso.patch
+Patch5: bzip2-1.0.4-cflags.patch
+Patch6: bzip2-1.0.4-bzip2recover.patch
+Patch7: bzip2-1.0.2-ow.patch
+"
+
+src_prepare() {
+	lts6_srpm_epatch || die
+
 	# epatch "${FILESDIR}"/${PN}-1.0.4-makefile-CFLAGS.patch
 	# epatch "${FILESDIR}"/${PN}-1.0.4-saneso.patch
 	epatch "${FILESDIR}"/${PN}-1.0.4-man-links.patch #172986
