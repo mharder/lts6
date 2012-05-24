@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-libs/openssl/openssl-1.0.0e.ebuild,v 1.8 2011/10/01 07:28:54 pva Exp $
 
-EAPI="3"
+EAPI="4"
 
 inherit eutils flag-o-matic toolchain-funcs rpm lts6-rpm
 
@@ -38,7 +38,9 @@ PDEPEND="app-misc/ca-certificates"
 #   After removal, it was confirmed that this patch was leading to a
 #   silent error where libcrypto.so.1.0.0 and libssl.so.1.0.0 were not
 #   being installed.
-SRPM_PATCHLIST="Patch1: openssl-1.0.0-beta3-defaults.patch
+SRPM_PATCHLIST="
+Patch0: openssl-1.0.0-beta4-redhat.patch
+Patch1: openssl-1.0.0-beta3-defaults.patch
 Patch4: openssl-1.0.0-beta5-enginesdir.patch
 Patch6: openssl-0.9.8b-test-use-localhost.patch
 Patch23: openssl-1.0.0-beta4-default-paths.patch
@@ -89,7 +91,8 @@ Patch72: openssl-1.0.0-cve-2011-4619.patch
 Patch73: openssl-1.0.0-modes-unaligned.patch
 Patch74: openssl-1.0.0-cve-2012-0884.patch
 Patch75: openssl-1.0.0-cve-2012-1165.patch
-Patch76: openssl-1.0.0-cve-2012-2110.patch"
+Patch76: openssl-1.0.0-cve-2012-2110.patch
+"
 
 pkg_setup() {
 	if ! use bindist; then
@@ -113,6 +116,9 @@ src_prepare() {
 	epatch "${FILESDIR}"/${PN}-1.0.0a-ldflags.patch #327421
 	epatch "${FILESDIR}"/${PN}-1.0.0d-fbsd-amd64.patch #363089
 	epatch "${FILESDIR}"/${PN}-1.0.0d-windres.patch #373743
+	# Revert the replacement by SHLIB_SONAMEVER in the EL patch:
+	# Patch0: openssl-1.0.0-beta4-redhat.patch
+	epatch "${FILESDIR}"/${PN}-1.0.0-revert-SHLIB_SONAMEVER.patch
 	epatch_user #332661
 
 	# disable fips in the build
@@ -158,6 +164,8 @@ src_configure() {
 	echoit() { echo "$@" ; "$@" ; }
 
 	local krb5=$(has_version app-crypt/mit-krb5 && echo "MIT" || echo "Heimdal")
+
+	export RPM_OPT_FLAGS=${CFLAGS}
 
 	local sslout=$(./gentoo.config)
 	einfo "Use configuration ${sslout:-(openssl knows best)}"

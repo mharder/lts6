@@ -4,5 +4,6 @@
 <herd>base-system</herd>
 <use>
   <flag name='rfc3779'>Enable support for RFC 3779 (X.509 Extensions for IP Addresses and AS Identifiers)</flag>
+  <flag name='elfips'>Enable Enterprise Linux Fips supppot</flag>
 </use>
 </pkgmetadata>
