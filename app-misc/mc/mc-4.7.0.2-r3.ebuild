@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=3
+EAPI=4
 
 inherit base rpm lts6-rpm
 
@@ -17,7 +17,8 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86
 IUSE="+edit gpm nls samba slang X"
 
 SRPM="mc-4.7.0.2-3.el6.src.rpm"
-SRC_URI="http://ftp.scientificlinux.org/linux/scientific/6.1/SRPMS/vendor/${SRPM}"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
+RESTRICT="mirror"
 
 RDEPEND=">=dev-libs/glib-2.8:2
 	gpm? ( sys-libs/gpm )
@@ -36,10 +37,9 @@ DEPEND="${RDEPEND}
 
 S=${WORKDIR}/${MY_P}
 
-src_unpack() {
-	rpm_src_unpack || die
-	cd "${S}"
-	lts6_rpm_spec_epatch "${WORKDIR}/${PN}.spec" || die
+src_prepare() {
+	SRPM_PATCHLIST="mc-extensions.patch"
+	lts6_srpm_epatch || die
 }
 
 src_configure() {

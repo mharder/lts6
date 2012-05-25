@@ -12,6 +12,5 @@
   </maintainer>
   <use>
     <flag name="edit">Compile and install the mcedit application</flag>
-    <flag name="mclib">Compile and install the libmc.so shared library</flag>
   </use>
 </pkgmetadata>
