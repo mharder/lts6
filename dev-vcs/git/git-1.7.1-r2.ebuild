@@ -2,10 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/dev-vcs/git/Attic/git-1.7.1-r1.ebuild,v 1.9 2010/08/16 05:47:29 robbat2 Exp $
 
-EAPI=2
+EAPI=4
 
 GENTOO_DEPEND_ON_PERL=no
-inherit toolchain-funcs eutils elisp-common perl-module bash-completion
+inherit toolchain-funcs eutils elisp-common perl-module bash-completion-r1
 inherit rpm lts6-rpm
 
 MY_PV="${PV/_rc/.rc}"
@@ -20,10 +20,11 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE="+blksha1 +curl cgi doc emacs gtk iconv +perl ppcsha1 tk +threads +webdav xinetd cvs subversion"
+IUSE="bash-completion +blksha1 +curl cgi doc emacs gtk iconv +perl ppcsha1 tk +threads +webdav xinetd cvs subversion"
 
 SRPM="git-1.7.1-2.el6_0.1.src.rpm"
-SRC_URI="http://ftp.scientificlinux.org/linux/scientific/6.1/SRPMS/vendor/${SRPM}"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
+RESTRICT="mirror"
 
 # Common to both DEPEND and RDEPEND
 CDEPEND="
@@ -48,7 +49,7 @@ RDEPEND="${CDEPEND}
 	gtk?
 	(
 		>=dev-python/pygtk-2.8
-		|| ( dev-python/pygtksourceview:2  dev-python/gtksourceview-python )
+		dev-python/pygtksourceview:2
 	)"
 
 # This is how info docs are created with Git:
@@ -127,16 +128,9 @@ exportmakeopts() {
 
 src_unpack() {
 	rpm_src_unpack || die
-	cd "${S}"
-	# unpack ${PN}-manpages-${DOC_VER}.tar.bz2
-	# use doc && \
-	#	cd "${S}"/Documentation && \
-	#	unpack ${PN}-htmldocs-${DOC_VER}.tar.bz2
-	# cd "${S}"
 }
 
 src_prepare() {
-	cd "${S}"
 	lts6_rpm_spec_epatch "${WORKDIR}/${PN}.spec" || die
 
 	# JS install fixup
@@ -206,7 +200,10 @@ src_install() {
 		install || \
 		die "make install failed"
 
-	doman man?/*.[157] Documentation/*.[157]
+	# Depending on the tarball and manual rebuild of the documentation, the
+	# manpages may exist in either OR both of these directories.
+	find man?/*.[157] >/dev/null 2>&1 && doman man?/*.[157]
+	find Documentation/*.[157] >/dev/null 2>&1 && doman Documentation/*.[157]
 
 	dodoc README Documentation/{SubmittingPatches,CodingGuidelines}
 	use doc && dodir /usr/share/doc/${PF}/html
@@ -219,7 +216,7 @@ src_install() {
 	# Upstream does not ship this pre-built :-(
 	use doc && doinfo Documentation/{git,gitman}.info
 
-	dobashcompletion contrib/completion/git-completion.bash ${PN}
+	newbashcomp contrib/completion/git-completion.bash ${PN}
 
 	if use emacs ; then
 		elisp-install ${PN} contrib/emacs/git.{el,elc} || die
