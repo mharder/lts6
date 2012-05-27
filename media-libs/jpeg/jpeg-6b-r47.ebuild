@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/media-libs/jpeg/Attic/jpeg-6b-r8.ebuild,v 1.14 2008/08/16 14:46:39 vapier Exp $
 
-EAPI="3"
+EAPI="4"
 
 inherit libtool eutils toolchain-funcs rpm lts6-rpm
 
@@ -15,7 +15,8 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~spar
 IUSE="static-libs"
 
 SRPM="libjpeg-6b-46.el6.src.rpm"
-SRC_URI="http://ftp.scientificlinux.org/linux/scientific/6.1/SRPMS/vendor/${SRPM}"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
+RESTRICT="mirror"
 
 RDEPEND=""
 DEPEND="${RDEPEND}
@@ -26,25 +27,16 @@ src_unpack() {
 }
 
 src_prepare() {
-	cd "${S}"
 	EPATCH_SUFFIX="patch" epatch "${FILESDIR}"/patch || die
 
-	# The .spec file for this SRPM is not constructed in a
-	# manner such that lts6_rpm_spec_epatch can figure
-	# out the patches.  The patches will need to be 
-	# identified individually.
+	SRPM_PATCHLIST="# The contents of this Patch1 are included in:
+			# 51_all_jpeg-Debian-jpeglib.h_c++.patch
+			# Patch1: jpeg-c++.patch
+			Patch4: libjpeg-cflags.patch
+			Patch5: libjpeg-buf-oflo.patch
+			Patch6: libjpeg-autoconf.patch"
+	lts6_srpm_epatch || die
 
-	# cd "${S}"
-	# lts6_rpm_spec_epatch "${WORKDIR}"/libjpeg.spec || die
-
-	cd "${WORKDIR}"
-	# The contents of this patch are included in:
-	# 51_all_jpeg-Debian-jpeglib.h_c++.patch
-	# epatch "jpeg-c++.patch" || die
-
-	epatch "libjpeg-cflags.patch" || die
-	epatch "libjpeg-buf-oflo.patch" || die
-	epatch "libjpeg-autoconf.patch" || die
 	cp "${WORKDIR}/configure.in" "${S}" || die
 
 	cp -r "${FILESDIR}"/extra "${WORKDIR}"
@@ -56,13 +48,16 @@ src_prepare() {
 	elibtoolize
 }
 
-src_compile() {
+src_configure() {
 	tc-export CC RANLIB AR
 	econf \
 		--enable-shared \
 		$(use_enable static-libs static) \
 		--enable-maxmem=64 \
 		|| die "econf failed"
+}
+
+src_compile() {
 	emake || die "make failed"
 	emake -C "${WORKDIR}"/extra || die "make extra failed"
 }
