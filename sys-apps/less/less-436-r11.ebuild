@@ -4,7 +4,7 @@
 
 EAPI="4"
 
-inherit eutils rpm lts6-rpm
+inherit autotools eutils rpm lts6-rpm
 
 DESCRIPTION="Excellent text file viewer"
 HOMEPAGE="http://www.greenwoodsoftware.com/less/"
@@ -33,6 +33,8 @@ src_prepare() {
 	epatch "${FILESDIR}"/code2color.patch
 
 	lts6_srpm_epatch || die
+
+	eautoreconf
 }
 
 yesno() { use $1 && echo yes || echo no ; }
