@@ -1,0 +1,24 @@
+diff -Naur mozilla-esr10/configure mozilla-esr10.vpx/configure
+--- mozilla-esr10/configure	2012-05-29 16:20:42.625439004 -0500
++++ mozilla-esr10.vpx/configure	2012-05-29 21:52:45.962959210 -0500
+@@ -17638,7 +17638,7 @@
+ #include "confdefs.h"
+ 
+                 #include <vpx/vpx_decoder.h>
+-                #if !defined(VPX_CODEC_USE_INPUT_PARTITION)
++                #if !defined(VPX_CODEC_USE_INPUT_PARTITION) && !defined(VPX_CODEC_USE_INPUT_FRAGMENTS)
+                     #error "test failed."
+                 #endif
+                 
+diff -Naur mozilla-esr10/configure.in mozilla-esr10.vpx/configure.in
+--- mozilla-esr10/configure.in	2012-04-20 16:59:36.000000000 -0500
++++ mozilla-esr10.vpx/configure.in	2012-05-29 21:51:46.158873923 -0500
+@@ -5629,7 +5629,7 @@
+             dnl v0.9.6 one to check for.
+             AC_TRY_COMPILE([
+                 #include <vpx/vpx_decoder.h>
+-                #if !defined(VPX_CODEC_USE_INPUT_PARTITION)
++                #if !defined(VPX_CODEC_USE_INPUT_PARTITION) && !defined(VPX_CODEC_USE_INPUT_FRAGMENTS)
+                     #error "test failed."
+                 #endif
+                 ],
