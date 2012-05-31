@@ -25,7 +25,7 @@ LICENSE="|| ( MPL-1.1 GPL-2 LGPL-2.1 )"
 IUSE="+crashreporter gconf +ipc system-sqlite +webm"
 
 SRPM="xulrunner-10.0.4-1.el6_2.src.rpm"
-SRC_URI="http://mirror://lts62/vendor/${SRPM}"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
 ASM_DEPEND=">=dev-lang/yasm-1.1.0"
