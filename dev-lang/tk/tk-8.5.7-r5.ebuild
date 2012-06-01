@@ -15,7 +15,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86
 IUSE="debug threads truetype"
 
 SRPM="tk-8.5.7-5.el6.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
 RDEPEND="x11-libs/libX11
@@ -26,6 +26,17 @@ DEPEND="${RDEPEND}
 	x11-proto/xproto"
 
 S="${WORKDIR}/${MY_P}"
+
+SRPM_PATCHLIST="
+Patch1: tk8.5-make.patch
+Patch2: tk8.5-conf.patch
+# this patch isn't needed since tk8.6b1
+Patch3: tk-seg_input.patch
+# this patch is tracked in tk tracker
+Patch4: tk-8.5.7-color.patch
+# fixes sigsegv if there is no font seen by fontconfig (#606671)
+Patch5: tk-8.5.7-nofont-sigsegv.patch
+"
 
 pkg_setup() {
 	if use threads ; then
@@ -44,9 +55,8 @@ src_unpack() {
 	rpm_src_unpack || die
 }
 
-src_prepare () {
-	cd "${S}"
-	lts6_rpm_spec_epatch "${WORKDIR}/${PN}.spec" || die
+src_prepare() {
+	lts6_srpm_epatch || die
 
 	epatch "${FILESDIR}"/${PN}-8.4.11-multilib.patch
 
@@ -58,7 +68,7 @@ src_prepare () {
 	eautoreconf
 }
 
-src_compile() {
+src_configure() {
 	tc-export CC
 	cd "${S}"/unix
 
@@ -69,8 +79,6 @@ src_compile() {
 		$(use_enable threads) \
 		$(use_enable truetype xft) \
 		$(use_enable debug symbols) || die
-
-	emake || die
 }
 
 src_install() {
