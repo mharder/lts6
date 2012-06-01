@@ -15,7 +15,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~m68k ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86
 IUSE="debug threads"
 
 SRPM="tcl-8.5.7-6.el6.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
 S="${WORKDIR}/${MY_P}"
@@ -38,8 +38,11 @@ src_unpack() {
 }
 
 src_prepare () {
-	cd "${S}"
-	lts6_rpm_spec_epatch "${WORKDIR}/${PN}.spec" || die
+	SRPM_PATCHLIST="Patch0: tcl-8.5.1-autopath.patch
+			Patch1: tcl-8.5.0-conf.patch
+			Patch2: tcl-8.5.0-hidden.patch
+			Patch3: tcl-8.5.7-sigabrt.patch"
+	lts6_srpm_epatch || die
 
 	epatch "${FILESDIR}"/${PN}-8.5_alpha6-multilib.patch
 
