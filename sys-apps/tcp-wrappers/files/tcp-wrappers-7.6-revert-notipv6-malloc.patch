@@ -1,0 +1,14 @@
+diff -Naur tcp_wrappers_7.6/scaffold.c tcp_wrappers_7.6.b/scaffold.c
+--- tcp_wrappers_7.6/scaffold.c	2012-06-10 10:17:17.246717552 -0500
++++ tcp_wrappers_7.6.b/scaffold.c	2012-06-10 10:20:48.626362741 -0500
+@@ -26,10 +26,6 @@
+ #define	INADDR_NONE	(-1)		/* XXX should be 0xffffffff */
+ #endif
+ 
+-#ifndef INET6
+-extern char *malloc();
+-#endif
+-
+ /* Application-specific. */
+ 
+ #include "tcpd.h"

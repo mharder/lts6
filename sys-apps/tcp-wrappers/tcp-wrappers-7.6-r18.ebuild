@@ -4,11 +4,11 @@
 
 EAPI="4"
 
-inherit eutils toolchain-funcs rpm lts6-rpm
+inherit eutils flag-o-matic toolchain-funcs rpm lts6-rpm
 
 MY_P="${P//-/_}"
 PATCH_VER="1.0"
-DESCRIPTION="TCP Wrappers"
+DESCRIPTION="A security tool which acts as a wrapper for TCP daemons"
 HOMEPAGE="ftp://ftp.porcupine.org/pub/security/index.html"
 
 SRPM="tcp_wrappers-7.6-57.el6.src.rpm"
@@ -55,23 +55,24 @@ src_prepare() {
 	chmod ug+w Makefile
 
 	epatch "${FILESDIR}/10_all_more-headers.patch"
+	epatch "${FILESDIR}/${P}-reconcile-makefile.patch"
+	epatch "${FILESDIR}/${P}-revert-notipv6-malloc.patch"
 }
 
 src_compile() {
 	tc-export AR CC RANLIB
 
-	local myconf="-DHAVE_WEAKSYMS"
-	use ipv6 && myconf="${myconf} -DINET6=1 -Dss_family=__ss_family -Dss_len=__ss_len"
+	append-flags "-DHAVE_WEAKSYMS"
+	use ipv6 && append-flags "-DINET6=1 -Dss_family=__ss_family -Dss_len=__ss_len"
+	append-ldflags "-Wl,-z,relro"
 
 	emake \
 		REAL_DAEMON_DIR=/usr/sbin \
-		GENTOO_OPT="${myconf}" \
 		MAJOR=0 MINOR=${PV:0:1} REL=${PV:2:3} \
 		config-check || die "emake config-check failed"
 
 	emake \
 		REAL_DAEMON_DIR=/usr/sbin \
-		GENTOO_OPT="${myconf}" \
 		MAJOR=0 MINOR=${PV:0:1} REL=${PV:2:3} \
 		linux || die "emake linux failed"
 }
