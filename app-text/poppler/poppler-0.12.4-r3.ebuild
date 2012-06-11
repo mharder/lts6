@@ -4,12 +4,14 @@
 
 EAPI="3"
 
+CMAKE_MIN_VERSION="2.6.4"
+
 inherit cmake-utils rpm lts6-rpm
 
 DESCRIPTION="PDF rendering library based on the xpdf-3.0 code base"
 HOMEPAGE="http://poppler.freedesktop.org/"
 SRPM="poppler-0.12.4-3.el6_0.1.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
 LICENSE="GPL-2"
@@ -27,7 +29,7 @@ COMMON_DEPEND="
 		>=x11-libs/cairo-1.8.4
 		>=x11-libs/gtk+-2.14.0:2
 	)
-	jpeg? ( media-libs/jpeg )
+	jpeg? ( virtual/jpeg )
 	jpeg2k? ( media-libs/openjpeg )
 	lcms? ( =media-libs/lcms-1* )
 	png? ( media-libs/libpng )
@@ -37,7 +39,7 @@ COMMON_DEPEND="
 	)
 "
 DEPEND="${COMMON_DEPEND}
-	dev-util/pkgconfig
+	virtual/pkgconfig
 "
 RDEPEND="${COMMON_DEPEND}
 	!dev-libs/poppler
@@ -55,7 +57,6 @@ src_unpack() {
 }
 
 src_prepare() {
-	cd "${S}"
 	lts6_rpm_spec_epatch "${WORKDIR}/${PN}.spec" || die
 
 	epatch "${FILESDIR}"/${PN}-0.12.3-cmake-disable-tests.patch

@@ -9,8 +9,8 @@
 </maintainer>
 <use>
 	<flag name='exceptions'>Enable exceptions throwing.</flag>
-	<flag name='introspection'>Enable GObject introspection.</flag>
 	<flag name='utils'>Install command-line PDF converters and various utilities.</flag>
+	<flag name='abiword'>Enable Abiword support.</flag>
 	<flag name='xpdf-headers'></flag>
 </use>
 </pkgmetadata>
