@@ -14,7 +14,7 @@ HOMEPAGE="http://www.icewm.org/"
 S=${WORKDIR}/${P/_}
 
 SRPM="icewm-1.2.37-1.2.src.rpm"
-SRC_URI="mirror://lts6/sl6-added/${SRPM}"
+SRC_URI="mirror://lts62/sl6-added/${SRPM}"
 RESTRICT="mirror"
 
 LICENSE="GPL-2"

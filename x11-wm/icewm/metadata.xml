@@ -7,4 +7,7 @@
 		It is able to emulate the looks of Motif, OS/2, and Windows, and allows you
 		to have a customizable look using pixmaps.
 	</longdescription>
+	<use>
+		<flag name="esd">Provide esd (esound) support</flag>
+	</use>
 </pkgmetadata>
