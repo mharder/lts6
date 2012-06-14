@@ -36,7 +36,7 @@ patches() {
 
 DESCRIPTION="The standard GNU Bourne again shell"
 HOMEPAGE="http://tiswww.case.edu/php/chet/bash/bashtop.html"
-SRPM="bash-4.1.2-8.el6.src.rpm"
+SRPM="bash-4.1.2-9.el6_2.src.rpm"
 SRC_URI="mirror://lts62/vendor/${SRPM}
 	$(patches)
 	$(patches ${READLINE_PLEVEL} readline ${READLINE_VER})"
@@ -50,8 +50,7 @@ DEPEND=">=sys-libs/ncurses-5.2-r2
 	nls? ( virtual/libintl )
 	virtual/yacc"
 RDEPEND="${DEPEND}
-	!<sys-apps/portage-2.1.7.16
-	!<sys-apps/paludis-0.26.0_alpha5"
+	!<sys-apps/portage-2.1.7.16"
 
 S=${WORKDIR}/${MY_P}
 
@@ -105,7 +104,9 @@ src_unpack() {
 			Patch124: bash-4.1-examples.patch
 			Patch125: bash-4.1-bind_int_variable.patch
 			Patch126: bash-4.1-broken_pipe.patch
-			Patch127: bash-4.1-manpage.patch"
+			Patch127: bash-4.1-manpage.patch
+			# 800473, Don't call malloc in signal handler
+			Patch128: bash-4.1-defer-sigchld-trap.patch"
 	lts6_srpm_epatch || die
 	eautoreconf
 }
@@ -123,6 +124,9 @@ src_compile() {
 		-DNON_INTERACTIVE_LOGIN_SHELLS \
 		-DSSH_SOURCE_BASHRC \
 		$(use bashlogger && echo -DSYSLOG_HISTORY)
+
+	# Enterprise Linux appended CFLAGS/CPPFLAGS
+	append-cppflags -fwrapv -D_GNU_SOURCE -DRECYCLES_PIDS `getconf LFS_CFLAGS`
 
 	# Always use the buildin readline, else if we update readline
 	# bash gets borked as readline is usually not binary compadible
