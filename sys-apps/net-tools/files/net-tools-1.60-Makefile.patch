@@ -1,0 +1,61 @@
+diff -Naur net-tools-1.60/Makefile net-tools-1.60.b/Makefile
+--- net-tools-1.60/Makefile	2012-06-14 12:21:35.349665458 -0500
++++ net-tools-1.60.b/Makefile	2012-06-14 12:35:57.633698552 -0500
+@@ -76,7 +76,7 @@
+ NET_LIB_PATH = lib
+ NET_LIB_NAME = net-tools
+ 
+-PROGS	:= ifconfig hostname arp netstat route rarp slattach plipconfig nameif
++PROGS	:= ifconfig hostname arp netstat route slattach plipconfig nameif
+ 
+ -include config.make
+ ifeq ($(HAVE_IP_TOOLS),1)
+@@ -89,6 +89,7 @@
+ # Compiler and Linker Options
+ # You may need to uncomment and edit these if you are using libc5 and IPv6.
+ CFLAGS ?= -O2 -g
++CFLAGS += -Wall
+ CFLAGS += -fno-strict-aliasing # code needs a lot of work before strict aliasing is safe
+ CPPFLAGS += -D_GNU_SOURCE
+ RESLIB = # -L/usr/inet6/lib -linet6
+@@ -185,9 +186,9 @@
+ i18ndir:
+ 		@$(MAKE) -C po
+ 
+-subdirs:
+-		@for i in $(SUBDIRS); do $(MAKE) -C $$i || exit $$? ; done
+-
++# use libdir target for lib/ to avoid parallel build issues
++subdirs:	libdir
++		@for i in $(SUBDIRS:$(NET_LIB_PATH)/=); do $(MAKE) -C $$i || exit $$? ; done
+ 
+ ifconfig:	$(NET_LIB) ifconfig.o
+ 		$(CC) $(LDFLAGS) -o ifconfig ifconfig.o $(NLIB) $(RESLIB)
+@@ -204,9 +205,6 @@
+ arp:		$(NET_LIB) arp.o
+ 		$(CC) $(LDFLAGS) -o arp arp.o $(NLIB) $(RESLIB)
+ 
+-rarp:		$(NET_LIB) rarp.o
+-		$(CC) $(LDFLAGS) -o rarp rarp.o $(NLIB)
+-
+ slattach:	$(NET_LIB) slattach.o
+ 		$(CC) $(LDFLAGS) -o slattach slattach.o $(NLIB)
+ 
+@@ -234,7 +232,6 @@
+ 	install -m 0755 nameif     ${BASEDIR}/sbin
+ 	install -m 0755 netstat    ${BASEDIR}/bin
+ 	install -m 0755 plipconfig $(BASEDIR)/sbin
+-	install -m 0755 rarp       ${BASEDIR}/sbin
+ 	install -m 0755 route      ${BASEDIR}/sbin
+ 	install -m 0755 slattach   $(BASEDIR)/sbin
+ ifeq ($(HAVE_IP_TOOLS),1)
+@@ -254,8 +251,7 @@
+ 
+ savebin:
+ 	@for i in ${BASEDIR}/sbin/arp ${BASEDIR}/sbin/ifconfig \
+-                 ${BASEDIR}/bin/netstat \
+-		 ${BASEDIR}/sbin/rarp ${BASEDIR}/sbin/route \
++		 ${BASEDIR}/bin/netstat ${BASEDIR}/sbin/route \
+ 		 ${BASEDIR}/bin/hostname ${BASEDIR}/bin/ypdomainname \
+                  ${BASEDIR}/bin/dnsdomainname ${BASEDIR}/bin/nisdomainname \
+ 		 ${BASEDIR}/bin/domainname ; do \
