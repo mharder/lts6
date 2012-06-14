@@ -14,7 +14,7 @@ KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~spar
 IUSE="ssl"
 
 SRPM="perl-libwww-perl-5.833-2.el6.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
 DEPEND="virtual/perl-libnet
@@ -28,7 +28,7 @@ DEPEND="virtual/perl-libnet
 RDEPEND="${DEPEND}"
 
 src_unpack() {
-        rpm_src_unpack || die
+	rpm_src_unpack || die
 	has src_prepare ${PERL_EXPF} || perl-module_src_prepare
 }
 
