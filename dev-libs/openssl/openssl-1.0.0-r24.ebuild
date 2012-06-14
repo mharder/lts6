@@ -10,7 +10,7 @@ REV="1.7"
 DESCRIPTION="full-strength general purpose cryptography library (including SSL v2/v3 and TLS v1)"
 HOMEPAGE="http://www.openssl.org/"
 
-SRPM="openssl-1.0.0-20.el6_2.4.src.rpm"
+SRPM="openssl-1.0.0-20.el6_2.5.src.rpm"
 SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
@@ -92,6 +92,7 @@ Patch73: openssl-1.0.0-modes-unaligned.patch
 Patch74: openssl-1.0.0-cve-2012-0884.patch
 Patch75: openssl-1.0.0-cve-2012-1165.patch
 Patch76: openssl-1.0.0-cve-2012-2110.patch
+Patch77: openssl-1.0.0-cve-2012-2333.patch
 "
 
 pkg_setup() {
