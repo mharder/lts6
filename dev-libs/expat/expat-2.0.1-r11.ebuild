@@ -3,11 +3,11 @@
 # $Header: /var/cvsroot/gentoo-x86/dev-libs/expat/expat-2.0.1-r6.ebuild,v 1.8 2012/03/15 02:29:18 ssuominen Exp $
 
 EAPI=4
-inherit eutils libtool toolchain-funcs rpm lts6-rpm
+inherit autotools eutils libtool toolchain-funcs rpm lts6-rpm
 
 DESCRIPTION="XML parsing libraries"
 HOMEPAGE="http://expat.sourceforge.net/"
-SRPM="expat-2.0.1-9.1.el6.src.rpm"
+SRPM="expat-2.0.1-11.el6_2.src.rpm"
 SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
@@ -31,12 +31,22 @@ src_prepare() {
 	# the EL SRPM.
 	# Gentoo patch fix_bug_1990430 is equivilant to 
 	# expat-1.95.8-CVE-2009-3720.patch.
-	SRPM_PATCHLIST="Patch1: expat-2.0.1-confcxx.patch"
+	SRPM_PATCHLIST="Patch1: expat-2.0.1-confcxx.patch
+			# Patch2: expat-2.0.1-CVE-2009-3560-revised.patch
+			# Patch3: expat-1.95.8-CVE-2009-3720.patch
+			Patch4: expat-2.0.1-CVE-2012-0876.patch
+			Patch5: expat-2.0.1-CVE-2012-1148.patch"
 	lts6_srpm_epatch || die
 
 	elibtoolize
+	eautoconf
 
 	mkdir "${S}"-build{,u,w} || die
+
+	# Copy the expat.vers file created by CVE-2012-1148 patch
+	cp "${S}/expat.vers" "${S}-build"
+	cp "${S}/expat.vers" "${S}-buildu"
+	cp "${S}/expat.vers" "${S}-buildw"
 }
 
 src_configure() {
