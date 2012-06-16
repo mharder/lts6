@@ -14,12 +14,12 @@ DESCRIPTION="GTK+2 bindings for Python"
 HOMEPAGE="http://www.pygtk.org/"
 
 SRPM="pygtk2-2.16.0-3.el6.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
 LICENSE="LGPL-2.1"
 SLOT="2"
-KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 sh sparc x86 ~x86-fbsd ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sh ~sparc ~x86 ~x86-fbsd ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
 IUSE="doc examples"
 
 RDEPEND=">=dev-libs/glib-2.8.0
@@ -38,12 +38,13 @@ DEPEND="${RDEPEND}
 	>=dev-util/pkgconfig-0.9"
 
 src_unpack() {
-        rpm_src_unpack || die
+	rpm_src_unpack || die
 }
 
 src_prepare() {
-	cd "${S}"
-	lts6_rpm_spec_epatch "${WORKDIR}/pygtk2.spec" || die
+	SRPM_PATCHLIST="# RH bug #208608
+			Patch0: pygtk-nodisplay-exception.patch"
+	lts6_srpm_epatch || die
 
 	# Fix declaration of codegen in .pc
 	epatch "${FILESDIR}/${PN}-2.13.0-fix-codegen-location.patch"
