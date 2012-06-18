@@ -10,7 +10,7 @@ DESCRIPTION="An extremely fast compression and decompression library"
 HOMEPAGE="http://www.oberhumer.com/opensource/lzo/"
 
 SRPM="lzo-2.03-3.1.el6.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
 LICENSE="GPL-2"
@@ -23,7 +23,6 @@ src_unpack() {
 }
 
 src_prepare() {
-	cd "${S}"
 	# Common SRPM Patches
 	SRPM_PATCHLIST="Patch0:         lzo-2.02-configure.patch"
 	lts6_srpm_epatch || die
