@@ -9,7 +9,7 @@ inherit eutils flag-o-matic autotools rpm lts6-rpm
 DESCRIPTION="A vector graphics library with cross-device output support"
 HOMEPAGE="http://cairographics.org/"
 SRPM="cairo-1.8.8-3.1.el6.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}"
+SRC_URI="mirror://lts62/vendor/${SRPM}"
 
 LICENSE="|| ( LGPL-2.1 MPL-1.1 )"
 SLOT="0"
@@ -55,8 +55,8 @@ src_unpack() {
 }
 
 src_prepare() {
-	cd "${S}"
-	lts6_rpm_spec_epatch "${WORKDIR}/${PN}.spec" || die
+	SRPM_PATCHLIST="Patch0: cairo-1.8.6-repeat-modes.patch"
+	lts6_srpm_epatch || die
 
 	if use lcdfilter; then
 		# LCD filter patch from Ubuntu, taken from:
