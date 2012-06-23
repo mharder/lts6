@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/app-text/openjade/openjade-1.3.2-r4.ebuild,v 1.3 2012/04/26 22:37:01 aballier Exp $
 
-EAPI=2
+EAPI="3"
 
 inherit autotools sgml-catalog eutils flag-o-matic multilib rpm lts6-rpm
 
@@ -88,9 +88,11 @@ src_compile() {
 src_install() {
 	insinto /usr/$(get_libdir)
 
-	make DESTDIR="${D}" \
+	make DESTDIR="${ED}" \
 		libdir=/usr/$(get_libdir) \
 		install install-man || die "make install failed"
+
+	rm -f "${ED}"/usr/$(get_libdir)/*.la || die
 
 	dosym openjade  /usr/bin/jade
 	dosym onsgmls   /usr/bin/nsgmls
@@ -102,7 +104,8 @@ src_install() {
 	insinto /usr/share/sgml/${P}/
 	doins dsssl/builtins.dsl
 
-	echo 'SYSTEM "builtins.dsl" "builtins.dsl"' > ${D}/usr/share/sgml/${P}/catalog
+	echo 'SYSTEM "builtins.dsl" "builtins.dsl"' \
+		> ${ED}/usr/share/sgml/${P}/catalog
 	insinto /usr/share/sgml/${P}/dsssl
 	doins dsssl/{dsssl.dtd,style-sheet.dtd,fot.dtd}
 	newins "${FILESDIR}"/${P}.dsssl-catalog catalog
