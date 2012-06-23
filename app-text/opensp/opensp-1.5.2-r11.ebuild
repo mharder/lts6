@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/app-text/opensp/opensp-1.5.2-r3.ebuild,v 1.7 2012/06/20 20:06:19 maekke Exp $
 
-EAPI=2
+EAPI="3"
 inherit eutils flag-o-matic rpm lts6-rpm
 
 MY_P=${P/opensp/OpenSP}
@@ -77,8 +77,10 @@ src_test() {
 }
 
 src_install() {
-	emake DESTDIR="${D}" \
+	emake DESTDIR="${ED}" \
 		pkgdocdir=/usr/share/doc/${PF} install || die "Installation failed"
+
+	rm -f "${ED}"/usr/$(get_libdir)/*.la || die
 
 	dodoc AUTHORS BUGS ChangeLog NEWS README
 }
