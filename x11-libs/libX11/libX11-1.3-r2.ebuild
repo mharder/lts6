@@ -18,7 +18,7 @@ SRPM="libX11-1.3-2.el6.src.rpm"
 SRC_URI="mirror://lts62/vendor/${SRPM}"
 RESTRICT="mirror"
 
-RDEPEND=">=x11-libs/xtrans-1.2.3
+RDEPEND=">=x11-libs/xtrans-1.2.2
 	x11-proto/kbproto
 	>=x11-proto/xproto-7.0.15
 	xcb? ( >=x11-libs/libxcb-1.2 )
