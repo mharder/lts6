@@ -1,0 +1,70 @@
+Wietse Venema
+Jun 14, 2011; 6:48pm
+PATCH: postfix and linux-3.0 
+
+Csillag Tamas:
+> quoting from here:
+> https://lkml.org/lkml/2011/5/29/204
+>
+> "So what are the big changes?
+>
+> NOTHING. Absolutely nothing. Sure, we have the usual two thirds driver
+> changes, and a lot of random fixes, but the point is that 3.0 is
+> *just* about renumbering..."
+
+In that case, the following patch will be sufficient for all supported
+Postfix releases.
+
+        Wietse
+
+[20110614-linux3-patch] 
+
+diff -Naur postfix-2.6.6.orig//makedefs postfix-2.6.6//makedefs
+--- postfix-2.6.6.orig//makedefs	2009-10-18 19:30:12.000000000 -0500
++++ postfix-2.6.6//makedefs	2012-08-24 15:08:19.087589008 -0500
+@@ -325,6 +325,33 @@
+ 			   rm -f makedefs.test makedefs.test.[co];;
+ 		esac
+ 		;;
++    Linux.3*)	SYSTYPE=LINUX3
++		if [ -f /usr/include/db.h ]
++		then
++		    : we are all set
++		elif [ -f /usr/include/db/db.h ]
++		then
++		    CCARGS="$CCARGS -I/usr/include/db"
++		else
++		    # On a properly installed system, Postfix builds
++		    # by including <db.h> and by linking with -ldb
++		    echo "No <db.h> include file found." 1>&2
++		    echo "Install the appropriate db*-devel package first." 1>&2
++		    echo "See the RELEASE_NOTES file for more information." 1>&2
++		    exit 1
++		fi
++		SYSLIBS="-ldb"
++		for name in nsl resolv
++		do
++		    for lib in /usr/lib64 /lib64 /usr/lib /lib
++		    do
++			test -e $lib/lib$name.a -o -e $lib/lib$name.so && {
++			    SYSLIBS="$SYSLIBS -l$name"
++			    break
++			}
++		    done
++		done
++		;;
+      GNU.0*|GNU/kFreeBSD.[567]*)
+      		SYSTYPE=GNU0
+ 		# Postfix no longer needs DB 1.85 compatibility
+diff -Naur postfix-2.6.6.orig//src/util/sys_defs.h postfix-2.6.6//src/util/sys_defs.h
+--- postfix-2.6.6.orig//src/util/sys_defs.h	2012-08-24 10:37:32.582863969 -0500
++++ postfix-2.6.6//src/util/sys_defs.h	2012-08-24 15:07:37.743585707 -0500
+@@ -703,7 +703,7 @@
+  /*
+   * LINUX.
+   */
+-#ifdef LINUX2
++#if defined(LINUX2) || defined(LINUX3)
+ #define SUPPORTED
+ #include <sys/types.h>
+ #define UINT32_TYPE	unsigned int
