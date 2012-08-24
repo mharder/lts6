@@ -14,7 +14,7 @@ DESCRIPTION="Python wrapper for cairo vector graphics library"
 HOMEPAGE="http://cairographics.org/pycairo/"
 
 SRPM="pycairo-1.8.6-2.1.el6.src.rpm"
-SRC_URI="mirror://lts6/vendor/${SRPM}"
+SRC_URI="mirror://lts63/vendor/${SRPM}"
 RESTRICT="mirror"
 
 LICENSE="|| ( LGPL-2.1 MPL-1.1 )"
@@ -24,7 +24,7 @@ IUSE="doc examples"
 
 RDEPEND=">=x11-libs/cairo-1.8.6"
 DEPEND="${RDEPEND}
-	dev-util/pkgconfig
+	virtual/pkgconfig
 	doc? ( dev-python/sphinx )"
 
 RESTRICT_PYTHON_ABIS="2.4 2.5 3*"
