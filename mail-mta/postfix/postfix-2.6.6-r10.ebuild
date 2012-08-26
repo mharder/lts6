@@ -148,6 +148,14 @@ pkg_setup() {
 	group_user_check || die "Failed to check/add needed user/group"
 }
 
+src_unpack() {
+	# The Source RPM package for postfix contains the source code
+	# for two Gentoo packages:  Postfix and pflogsumm.
+	# Explicitly unpack only the postfix sources.
+	rpm_unpack "${SRPM}" || die "rpm_unpack failed!"
+	unpack "./${PN}-${PV}.tar.gz" || die "unpack failed!"
+}
+
 src_prepare() {
 	SRPM_PATCHLIST="Patch1: postfix-2.6.1-config.patch
 			Patch2: postfix-2.6.1-files.patch
