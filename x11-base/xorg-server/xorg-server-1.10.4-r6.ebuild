@@ -11,7 +11,7 @@ DESCRIPTION="X.Org X servers"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~sh ~sparc ~x86 ~x86-fbsd"
 
 SRPM="xorg-x11-server-1.10.4-6.sl6.3.src.rpm"
-SRC_URI="mirror://lts62/vendor/${SRPM}"
+SRC_URI="mirror://lts63/sl6-changed/${SRPM}"
 RESTRICT="mirror"
 
 IUSE_SERVERS="dmx kdrive xnest xorg xvfb"
@@ -75,12 +75,10 @@ DEPEND="${RDEPEND}
 	>=x11-proto/renderproto-0.11
 	>=x11-proto/resourceproto-1.0.2
 	>=x11-proto/scrnsaverproto-1.1
-	>=x11-proto/trapproto-3.4.3
 	>=x11-proto/videoproto-2.2.2
 	>=x11-proto/xcmiscproto-1.2.0
 	>=x11-proto/xextproto-7.1.99
 	>=x11-proto/xf86dgaproto-2.0.99.1
-	>=x11-proto/xf86rushproto-1.1.2
 	>=x11-proto/xf86vidmodeproto-2.2.99.1
 	>=x11-proto/xineramaproto-1.1.3
 	>=x11-proto/xproto-7.0.17
