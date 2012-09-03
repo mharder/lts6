@@ -1,0 +1,10 @@
+The purpose of the lts6 (Long Term Stable 6.x) overlay is to provide portage 
+ebuilds based on Enterprise Linux 6.x source RPMs.
+
+The goal is to develop a Gentoo-style installation that has long term 
+stability and support.
+
+As it stands now, Many of these ebuilds are significant downgrades, and would 
+tend to destabilize a typical Gentoo installation unless applied selectively.  
+A Stage 3+ base release will need to be developed for most of these ebuilds to 
+make sense.
