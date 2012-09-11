@@ -11,9 +11,9 @@ DESCRIPTION="uncompile an rgb color-name database"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x86-fbsd ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos ~sparc-solaris ~x64-solaris ~x86-solaris ~x86-winnt"
 IUSE=""
 
-SRPM="xorg-x11-server-utils-7.4-15.el6_0.2.src.rpm"
-SRC_URI="mirror://lts62/vendor/${SRPM}"
-SRPM_PROTO_PKG="${PN}-${PV}.tar.bz2"
+SRPM="xorg-x11-server-utils-7.5-5.2.el6.src.rpm"
+SRC_URI="mirror://lts63/vendor/${SRPM}"
+SRPM_SUB_PKG="${PN}-${PV}.tar.bz2"
 RESTRICT="mirror"
 
 RDEPEND=""
@@ -22,7 +22,7 @@ DEPEND="${RDEPEND}
 
 src_unpack() {
 	rpm_unpack "${SRPM}" || die "rpm_unpack failed!"
-	unpack "./${SRPM_PROTO_PKG}" || die "unpack failed!"
+	unpack "./${SRPM_SUB_PKG}" || die "Subpackage unpack failed!"
 }
 
 # Note, "Patch1100: rgb-1.0.0-datadir-rgbpath-fix.patch" is commented
