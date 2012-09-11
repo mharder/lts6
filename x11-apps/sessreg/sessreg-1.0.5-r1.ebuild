@@ -7,11 +7,11 @@ inherit xorg-2 rpm lts6-rpm
 
 DESCRIPTION="manage utmp/wtmp entries for non-init clients"
 
-KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 s390 sh sparc x86 ~x86-fbsd"
+KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x86-fbsd"
 IUSE=""
 
-SRPM="xorg-x11-server-utils-7.4-15.el6_0.2.src.rpm"
-SRC_URI="mirror://lts62/vendor/${SRPM}"
+SRPM="xorg-x11-server-utils-7.5-5.2.el6.src.rpm"
+SRC_URI="mirror://lts63/vendor/${SRPM}"
 SRPM_PROTO_PKG="${PN}-${PV}.tar.bz2"
 RESTRICT="mirror"
 
