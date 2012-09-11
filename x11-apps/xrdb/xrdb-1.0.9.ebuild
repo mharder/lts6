@@ -10,8 +10,8 @@ DESCRIPTION="X server resource database utility"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~x86-fbsd ~x86-interix ~amd64-linux ~x86-linux ~ppc-macos ~x86-macos ~sparc-solaris ~x64-solaris ~x86-solaris"
 IUSE=""
 
-SRPM="xorg-x11-server-utils-7.4-15.el6_0.2.src.rpm"
-SRC_URI="mirror://lts62/vendor/${SRPM}"
+SRPM="xorg-x11-server-utils-7.5-5.2.el6.src.rpm"
+SRC_URI="mirror://lts63/vendor/${SRPM}"
 SRPM_PROTO_PKG="${PN}-${PV}.tar.bz2"
 RESTRICT="mirror"
 
@@ -22,9 +22,4 @@ DEPEND="${RDEPEND}"
 src_unpack() {
 	rpm_unpack "${SRPM}" || die "rpm_unpack failed!"
 	unpack "./${SRPM_PROTO_PKG}" || die "unpack failed!"
-}
-
-src_prepare() {
-	SRPM_PATCHLIST="Patch1101: cve-2011-0465.patch"
-	lts6_srpm_epatch || die
 }
