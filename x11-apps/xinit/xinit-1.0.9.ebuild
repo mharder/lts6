@@ -2,15 +2,19 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: /var/cvsroot/gentoo-x86/x11-apps/xinit/Attic/xinit-1.2.0-r4.ebuild,v 1.7 2010/11/13 19:22:05 armin76 Exp $
 
-EAPI="2"
+EAPI=4
 
-inherit x-modular pam
+inherit pam xorg-2 rpm lts6-rpm
 
 DESCRIPTION="X Window System initializer"
 
 LICENSE="${LICENSE} GPL-2"
 KEYWORDS="alpha amd64 arm hppa ia64 ~mips ppc ppc64 s390 sh sparc x86 ~x86-fbsd"
 IUSE="+minimal pam"
+
+SRPM="xorg-x11-xinit-1.0.9-13.el6.src.rpm"
+SRC_URI="mirror://lts63/vendor/${SRPM}"
+RESTRICT="mirror"
 
 RDEPEND="
 	x11-apps/xauth
@@ -30,12 +34,30 @@ PATCHES=(
 	"${FILESDIR}/0001-Gentoo-specific-customizations.patch"
 )
 
+SRPM_PATCHLIST="
+Patch1: xinit-1.0.2-client-session.patch
+# Patch2 is commented out in the SRPM spec file.
+# Patch2: xinit-1.0.7-poke-ck.patch
+Patch3: xinit-1.0.9-unset.patch
+"
+
 pkg_setup() {
-	CONFIGURE_OPTIONS="--with-xinitdir=/etc/X11/xinit"
+	xorg-2_pkg_setup
+
+	XORG_CONFIGURE_OPTIONS=(
+		--with-xinitdir=/etc/X11/xinit
+	)
+}
+
+src_prepare() {
+	lts6_srpm_epatch || die
+
+	xorg-2_src_prepare
 }
 
 src_install() {
-	x-modular_src_install
+	xorg-2_src_install
+
 	exeinto /etc/X11
 	doexe "${FILESDIR}"/chooser.sh "${FILESDIR}"/startDM.sh || die
 	exeinto /etc/X11/Sessions
@@ -49,10 +71,13 @@ src_install() {
 	dodir /etc/X11/xinit/xinitrc.d
 	exeinto /etc/X11/xinit/xinitrc.d/
 	doexe "${FILESDIR}/00-xhost"
+
+	insinto /usr/share/xsessions
+	doins "${FILESDIR}/Xsession.desktop"
 }
 
 pkg_postinst() {
-	x-modular_pkg_postinst
+	xorg-2_pkg_postinst
 	ewarn "If you use startx to start X instead of a login manager like gdm/kdm,"
 	ewarn "you can set the XSESSION variable to anything in /etc/X11/Sessions/ or"
 	ewarn "any executable. When you run startx, it will run this as the login session."
