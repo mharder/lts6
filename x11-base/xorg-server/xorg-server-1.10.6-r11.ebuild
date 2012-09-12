@@ -56,7 +56,7 @@ RDEPEND=">=app-admin/eselect-opengl-1.0.8
 	)
 	tslib? ( >=x11-libs/tslib-1.0 x11-proto/xcalibrateproto )
 	udev? ( >=sys-fs/udev-143 )
-	>=x11-apps/xinit-1.3"
+	>=x11-apps/xinit-1.0.9"
 
 # dmx+doc DEPEND is a hack, a proper solution needs to be implemented in the
 # xorg-2.eclass for next release
