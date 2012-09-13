@@ -1,0 +1,12 @@
+diff -Naur libXvMC-1.0.4.orig/src/XvMCWrapper.c libXvMC-1.0.4.patch/src/XvMCWrapper.c
+--- libXvMC-1.0.4.orig/src/XvMCWrapper.c	2006-12-06 11:00:23.000000000 -0600
++++ libXvMC-1.0.4.patch/src/XvMCWrapper.c	2012-09-13 10:19:04.349041611 -0500
+@@ -44,6 +44,8 @@
+   #include "config.h"
+ #endif
+ 
++#include <X11/Xlib.h>
++#include <X11/extensions/XvMClib.h> 
+ #include <X11/extensions/XvMC.h>
+ #include <X11/extensions/vldXvMC.h>
+ #include <dlfcn.h>
