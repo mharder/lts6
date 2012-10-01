@@ -1,0 +1,12 @@
+diff -Naur xdm-1.1.6.orig/configure.ac xdm-1.1.6/configure.ac
+--- xdm-1.1.6.orig/configure.ac	2012-10-01 14:18:43.678964358 -0500
++++ xdm-1.1.6/configure.ac	2012-10-01 14:22:01.123360324 -0500
+@@ -306,7 +306,7 @@
+ 
+ # Packages used by multiple programs
+ 
+-XAW_CHECK_XPRINT_SUPPORT(XDM_PRINT)
++PKG_CHECK_MODULES(XDM_PRINT, xaw7)
+ PKG_CHECK_MODULES(DMCP, xdmcp)
+ PKG_CHECK_MODULES(XLIB, x11)
+ PKG_CHECK_MODULES(AUTH, xau)
