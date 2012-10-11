@@ -8,24 +8,19 @@ inherit flag-o-matic eutils libtool rpm lts6-rpm
 DESCRIPTION="Library for arithmetic on arbitrary precision integers, rational numbers, and floating-point numbers"
 HOMEPAGE="http://gmplib.org/"
 SRPM="gmp-4.3.1-7.el6_2.2.src.rpm"
-SRC_URI="mirror://lts62/vendor/${SRPM}"
+SRC_URI="mirror://lts63/vendor/${SRPM}"
 #	doc? ( http://www.nada.kth.se/~tege/${PN}-man-${PV}.pdf )"
 RESTRICT="mirror"
 
 LICENSE="LGPL-3"
 SLOT="0"
 KEYWORDS="~alpha ~amd64 ~arm ~hppa ~ia64 ~m68k ~mips ~ppc ~ppc64 ~s390 ~sh ~sparc ~x86 ~sparc-fbsd ~x86-fbsd"
-IUSE="cxx" #doc
+IUSE="cxx static-libs" #doc
 
 DEPEND="sys-devel/m4"
 RDEPEND=""
 
-src_unpack() {
-	rpm_src_unpack || die
-}
-
 src_prepare() {
-	cd "${S}"
 	epatch "${FILESDIR}"/${PN}-4.1.4-noexecstack.patch
 	epatch "${FILESDIR}"/${PN}-4.3.0-ABI-multilib.patch
 	# Use the SRPM s390 patch.
@@ -65,6 +60,7 @@ src_configure() {
 		--disable-mpfr \
 		--disable-mpbsd \
 		$(use_enable cxx) \
+		$(use_enable static-libs static) \
 		|| die "configure failed"
 
 	# Fix the ABI for hppa2.0
@@ -78,6 +74,14 @@ src_configure() {
 
 src_install() {
 	emake DESTDIR="${D}" install || die "make install failed"
+
+	# should be a standalone lib
+	rm -f "${D}"/usr/$(get_libdir)/libgmp.la
+	# this requires libgmp
+	local la="${D}/usr/$(get_libdir)/libgmpxx.la"
+	use static-libs \
+		&& sed -i 's:/[^ ]*/libgmp.la:-lgmp:' "${la}" \
+		|| rm -f "${la}"
 
 	dodoc AUTHORS ChangeLog NEWS README
 	dodoc doc/configuration doc/isa_abi_headache
