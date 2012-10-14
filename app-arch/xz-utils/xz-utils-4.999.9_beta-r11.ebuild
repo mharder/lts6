@@ -40,7 +40,7 @@ src_unpack() {
 	# In an RPM development environment, I suppose it is typical
 	# to assume you're virtually bootstrapping everything.
 	# Soln: Use an explicit tar command to unpack the file.
-	tar xJf "./xz-4.999.9beta.20091007git.tar.xz" || die
+	tar xf "./xz-4.999.9beta.20091007git.tar.xz" --use-compress-program=xz || die
 }
 
 src_configure() {
