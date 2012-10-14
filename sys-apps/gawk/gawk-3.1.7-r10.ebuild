@@ -8,8 +8,8 @@ inherit eutils toolchain-funcs multilib rpm lts6-rpm
 
 DESCRIPTION="GNU awk pattern-matching language"
 HOMEPAGE="http://www.gnu.org/software/gawk/gawk.html"
-SRPM="gawk-3.1.7-9.el6.src.rpm"
-SRC_URI="mirror://lts62/vendor/${SRPM}"
+SRPM="gawk-3.1.7-10.el6.src.rpm"
+SRC_URI="mirror://lts63/vendor/${SRPM}"
 RESTRICT="mirror"
 
 LICENSE="GPL-2"
@@ -40,7 +40,8 @@ src_prepare() {
 			Patch3: gawk-3.1.7-double-free-wstptr.patch
 			Patch4: gawk-3.1.7-byacc-overflow.patch
 			Patch5: gawk-3.1.7-preserve-argv.patch
-			Patch6: gawk-3.1.7-signed-overflow-warning.patch"
+			Patch6: gawk-3.1.7-signed-overflow-warning.patch
+			Patch7: gawk-3.1.7-mbgsub.patch"
 	lts6_srpm_epatch || die
 
 	epatch "${FILESDIR}"/${PN}-3.1.6-gnuinfo.patch #249130
@@ -57,7 +58,8 @@ src_configure() {
 	econf \
 		--libexec='$(libdir)/misc' \
 		$(use_enable nls) \
-		--enable-switch
+		--enable-switch \
+		--disable-libsigsegv
 }
 
 src_compile() {
