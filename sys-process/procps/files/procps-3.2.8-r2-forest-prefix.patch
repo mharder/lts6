@@ -1,0 +1,30 @@
+diff -Nurp procps-3.2.8.orig/ps/output.c procps-3.2.8/ps/output.c
+--- procps-3.2.8.orig/ps/output.c	2013-07-08 20:01:36.527308375 +0000
++++ procps-3.2.8/ps/output.c	2013-07-08 20:11:07.286347124 +0000
+@@ -338,7 +338,7 @@ static int pr_args(char *restrict const 
+   unsigned flags;
+   int rightward=max_rightward;
+ 
+-  if(forest_prefix){
++  if(/*forest_prefix*/1){
+     int fh = forest_helper(outbuf);
+     endp += fh;
+     rightward -= fh;
+@@ -365,7 +365,7 @@ static int pr_comm(char *restrict const 
+   unsigned flags;
+   int rightward=max_rightward;
+   
+-  if(forest_prefix){
++  if(/*forest_prefix*/1){
+     int fh = forest_helper(outbuf);
+     endp += fh;
+     rightward -= fh;
+@@ -390,7 +390,7 @@ static int pr_fname(char *restrict const
+   char *endp = outbuf;
+   int rightward = max_rightward;
+   
+-  if(forest_prefix){
++  if(/*forest_prefix*/1){
+     int fh = forest_helper(outbuf);
+     endp += fh;
+     rightward -= fh;
