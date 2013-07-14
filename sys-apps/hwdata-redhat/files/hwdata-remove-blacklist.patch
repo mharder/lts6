@@ -1,0 +1,14 @@
+Use the blacklist.conf file from the udev ebuild.
+
+diff -Nur hwdata-0.233.a/Makefile hwdata-0.233.b/Makefile
+--- hwdata-0.233.a/Makefile	2012-09-26 05:07:38.000000000 -0500
++++ hwdata-0.233.b/Makefile	2013-07-14 15:15:19.940055082 -0500
+@@ -31,8 +31,6 @@
+ 		install -m 644 $$foo $(datadir)/$(NAME) ;\
+ 	done
+ 	mkdir -p -m 755 $(datadir)/$(NAME)/videoaliases
+-	mkdir -p -m 755 $(sysconfdir)/modprobe.d
+-	install -m 644 blacklist.conf $(sysconfdir)/modprobe.d
+ 
+ commit:
+ 	git commit -a ||:
